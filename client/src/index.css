@@ -1,0 +1,300 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 98%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 98%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 214 90% 48%;
+  --primary-foreground: 0 0% 100%;
+  --primary-light: 210 90% 60%;
+  --primary-dark: 220 90% 40%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47.4% 11.2%;
+  --secondary-dark: 210 40% 90%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 214 90% 48%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* FicNest Animated Logo Styles */
+@keyframes letter-cycle-1 {
+  0%, 1% { opacity: 0; transform: scale(1) rotate(0deg); }
+  2%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); } 
+  42% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  43%, 81% { opacity: 1; transform: scale(1) rotate(0deg); }
+  82%, 83% { opacity: 0; transform: scale(1) rotate(0deg); }
+  84%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-2 {
+  0%, 3% { opacity: 0; transform: scale(1) rotate(0deg); }
+  4%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  43%, 77% { opacity: 1; transform: scale(1) rotate(0deg); }
+  78%, 79% { opacity: 0; transform: scale(1) rotate(0deg); }
+  80%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-3 {
+  0%, 5% { opacity: 0; transform: scale(1) rotate(0deg); }
+  6%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  43%, 73% { opacity: 1; transform: scale(1) rotate(0deg); }
+  74%, 75% { opacity: 0; transform: scale(1) rotate(0deg); }
+  76%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-4 {
+  0%, 7% { opacity: 0; transform: scale(1) rotate(0deg); }
+  8%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  43%, 69% { opacity: 1; transform: scale(1) rotate(0deg); }
+  70%, 71% { opacity: 0; transform: scale(1) rotate(0deg); }
+  72%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-5 {
+  0%, 9% { opacity: 0; transform: scale(1) rotate(0deg); }
+  10%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  43%, 65% { opacity: 1; transform: scale(1) rotate(0deg); }
+  66%, 67% { opacity: 0; transform: scale(1) rotate(0deg); }
+  68%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-6 {
+  0%, 11% { opacity: 0; transform: scale(1) rotate(0deg); }
+  12%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  43%, 61% { opacity: 1; transform: scale(1) rotate(0deg); }
+  62%, 63% { opacity: 0; transform: scale(1) rotate(0deg); }
+  64%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes letter-cycle-7 {
+  0%, 13% { opacity: 0; transform: scale(1) rotate(0deg); }
+  14%, 39% { opacity: 1; transform: scale(1) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.2) rotate(-5deg); }
+  41% { opacity: 1; transform: scale(1.5) rotate(0deg); }
+  42% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  43%, 57% { opacity: 1; transform: scale(1) rotate(0deg); }
+  58%, 59% { opacity: 0; transform: scale(1) rotate(0deg); }
+  60%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes particle-explode {
+  0%, 39% { 
+    transform: translate(0, 0) scale(0); 
+    opacity: 0; 
+  }
+  40% { 
+    transform: translate(0, 0) scale(1); 
+    opacity: 1; 
+  }
+  60% { 
+    transform: translate(var(--end-x, 100px), var(--end-y, 100px)) scale(0.5); 
+    opacity: 0; 
+  }
+  100% { 
+    transform: translate(var(--end-x, 100px), var(--end-y, 100px)) scale(0); 
+    opacity: 0; 
+  }
+}
+
+/* Animation classes for the letters */
+.animate-letter-1 { animation: letter-cycle-1 5.3s infinite; }
+.animate-letter-2 { animation: letter-cycle-2 5.3s infinite; }
+.animate-letter-3 { animation: letter-cycle-3 5.3s infinite; }
+.animate-letter-4 { animation: letter-cycle-4 5.3s infinite; }
+.animate-letter-5 { animation: letter-cycle-5 5.3s infinite; }
+.animate-letter-6 { animation: letter-cycle-6 5.3s infinite; }
+.animate-letter-7 { animation: letter-cycle-7 5.3s infinite; }
+
+/* Particle styling */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, 0) scale(0);
+  opacity: 0;
+  animation: particle-explode 5.3s infinite;
+  will-change: transform, opacity;
+  filter: blur(0.5px);
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Particle colors */
+.particle:nth-of-type(7n+1) { background-color: #3498db; }
+.particle:nth-of-type(7n+2) { background-color: #9b59b6; }
+.particle:nth-of-type(7n+3) { background-color: #e74c3c; }
+.particle:nth-of-type(7n+4) { background-color: #f39c12; }
+.particle:nth-of-type(7n+5) { background-color: #2ecc71; }
+.particle:nth-of-type(7n+6) { background-color: #1abc9c; }
+.particle:nth-of-type(7n+7) { background-color: #34495e; }
+
+/* ==== COPY PROTECTION STYLES ==== */
+
+/* Disable text selection globally */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow selection on form elements */
+input, 
+textarea, 
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Apply overlay protection to prevent easy scraping */
+.protected-content {
+  position: relative;
+}
+
+/* Apply noise/grain to the background of protected content */
+.protected-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAvEOwtAAAFVklEQVR4XpWWB67c2BUFb3g557T/hRo9/WUMZHlgr4Bg8Z4qQgQJlHI4A8SzFVrapvmTF9O7dmYRFZ60YiBhJRCgh1FYhiLAmdvX0CzTOpNE77ME0Zty/nWWzchDtiqrmQDeuv3powQ5ta2eN0FY0InkqDD73lT9c9lEzwUNqgFHs9VQce3TVClFCQrSTfOiYkVJQBmpbq2L6iZavPnAPcoU0dSw0SUTqz/GtrGuXfbyyBniKykOWQWGqwwMA7QiYAxi+IlPdqo+hYHnUt5ZPfnsHJyNiDtnpJyayNBkF6cWoYGAMY92U2hXHF/C1M8uP/ZtYdiuj26UdAdQQSXQErwSOMzt/XWRWAz5GuSBIkwG1H3FabJ2OsUOUhGC6tK4EMtJO0ttC6IBD3kM0ve0tJwMdSfjZo+EEISaeTr9P3wYrGjXqyC1krcKdhMpxEnt5JetoulscpyzhXN5FRpuPHvbeQaKxFAEB6EN+cYN6xD7RYGpXpNndMmZgM5Dcs3YSNFDHUo2LGfZuukSWyUYirJAdYbF3MfqEKmjM+I2EfhA94iG3L7uKrR+GdWD73ydlIB+6hgref1QTlmgmbM3/LeX5GI1Ux1RWpgxpLuZ2+I+IjzZ8wqE4nilvQdkUdfhzI5QDWy+kw5Wgg2pGpeEVeCCA7b85BO3F9DzxB3cdqvBzWcmzbyMiqhzuYqtHRVG2y4x+KOlnyqla8AoWWpuBoYRxzXrfKuILl6SfiWCbjxoZJUaCBj1CjH7GIaDbc9kqBY3W/Rgjda1iqQcOJu2WW+76pZC9QG7M00dffe9hNnseupFL53r8F7YHSwJWUKP2q+k7RdsxyOB11n0xtOvnW4irMMFNV4H0uqwS5ExsmP9AxbDTc9JwgneAT5vTiUSm1E7BSflSt3bfa1tv8Di3R8n3Af7MNWzs49hmauE2wP+ttrq+AsWpFG2awvsuOqbipWHgtuvuaAE+A1Z/7gC9hesnr+7wqCwG8c5yAg3AL1fm8T9AZtp/bbJGwl1pNrE7RuOX7PeMRUERVaPpEs+yqeoSmuOlokqw49pgomjLeh7icHNlG19yjs6XXOMedYm5xH2YxpV2tc0Ro2jJfxC50ApuxGob7lMsxfTbeUv07TyYxpeLucEH1gNd4IKH2LAg5TdVhlCafZvpskfncCfx8pOhJzd76bJWeYFnFciwcYfubRc12Ip/ppIhA1/mSZ/RxjFDrJC5xifFjJpY2Xl5zXdguFqYyTR1zSp1Y9p+tktDYYSNflcxI0iyO4TPBdlRcpeqjK/piF5bklq77VSEaA+z8qmJTFzIWiitbnzR794USKBUaT0NTEsVjZqLaFVqJoPN9ODG70IPbfBHKK+/q/AWR0tJzYHRULOa4MP+W/HfGadZUbfw177G7j/OGbIs8TahLyynl4X4RinF793Oz+BU0saXtUHrVBFT/DnA3ctNPoGbs4hRIjTok8i+algT1lTHi4SxFvONKNrgQFAq2/gFnWMXgwffgYMJpiKYkmW3tTg3ZQ9Jq+f8XN+A5eeUKHWvJWJ2sgJ1Sop+wwhqFVijqWaJhwtD8MNlSBeWNNWTa5Z5kPZw5+LbVT99wqTdx29lMUH4OIG/D86ruKEauBjvH5xy6um/Sfj7ei6UUVk4AIl3MyD4MSSTOFgSwsH/QJWaQ5as7ZcmgBZkzjjU1UrQ74ci1gWBCSGHtuV1H2mhSnO3Wp/3fEV5a+4wz//6qy8JxjZsmxxy5+4w9CDNJY09T072iKG0EnOS0arEYgXqYnXcYHwjTtUNAcMelOd4xpkoqiTYICWFq0JSiPfPDQdnt+4/wuqcXY47QILbgAAAABJRU5ErkJggg==");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Apply anti-scraper protections */
+.protected-content p {
+  /* Make text harder to scrape */
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  
+  /* Add slight CSS transformation to text */
+  transform: translateZ(0);
+  
+  /* Add tiny letter spacing to make scraping harder */
+  letter-spacing: 0.01em;
+}
+
+/* 
+ * Add an invisible overlay that prevents selection
+ * but allows normal interaction like scrolling
+ */
+.chapter-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Make sure code blocks and other permitted elements remain selectable */
+.code-block {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* Style for watermark */
+.watermark {
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.05;
+  font-size: 4rem;
+  font-weight: bold;
+  color: #000;
+  transform: rotate(-30deg);
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Error message for copy attempts */
+.copy-error-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 1000;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.copy-error-message.visible {
+  opacity: 1;
+}
+
+/* Reading content specific styles */
+.reading-content,
+.chapter-content {
+  /* Add stronger protection to chapter content */
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  
+  /* Prevent image dragging */
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    user-drag: none; /* Using standard property */
+  }
+}
+
+body,
+html {
+  overflow-x: hidden;
+}
