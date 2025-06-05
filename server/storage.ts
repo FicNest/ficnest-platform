@@ -183,19 +183,22 @@ export class DatabaseStorage implements IStorage {
 
   async getNovels(limit: number, offset: number, sortBy?: string, sortOrder?: string): Promise<Novel[]> {
     try {
-      let query = db
+      // Chain the query methods directly, including limit and offset
+      const novelsResult = await db
         .select()
         .from(novels)
         .where(eq(novels.status, "published"))
-        .orderBy(desc(novels.createdAt));
+        .orderBy(desc(novels.createdAt))
+        .limit(limit)   // Chaining limit directly
+        .offset(offset); // Chaining offset directly
 
-      // Add pagination
-      query = query.limit(limit).offset(offset);
+      console.log(`Fetched ${novelsResult.length} published novels with pagination`); // Add a log for confirmation
 
-      return await query;
+      return novelsResult; // Return the awaited result
+
     } catch (error) {
       console.error("Error in getNovels:", error);
-      return [];
+      return []; // Return empty array on error
     }
   }
 
@@ -203,36 +206,35 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(novels).where(eq(novels.authorId, authorId));
   }
 
-  async getNovelsByGenre(genre: string, limit: number, offset: number): Promise<Novel[]> {
+  async getNovelsByGenre(
+    genre: string,
+    limit: number,
+    offset: number
+  ): Promise<Novel[]> {
     try {
-      // First, get all published novels
-      const allNovels = await db
+      // Filter by status and genre directly in the database query
+      const genreLower = genre.toLowerCase();
+
+      const novelsByGenre = (await db
         .select()
         .from(novels)
-        .where(eq(novels.status, "published"));
-      
-      // Log for debugging
-      console.log(`Found ${allNovels.length} total published novels before genre filtering`);
-      
-      // Filter novels with the specified genre using a case-insensitive match
-      const genreLower = genre.toLowerCase();
-      const filteredNovels = allNovels.filter(novel => 
-        novel.genres && 
-        Array.isArray(novel.genres) &&
-        novel.genres.some(g => typeof g === 'string' && g.toLowerCase() === genreLower)
-      );
-      
-      console.log(`After filtering, found ${filteredNovels.length} novels matching genre: ${genre}`);
-      
-      // Apply pagination
-      const paginatedResults = filteredNovels.slice(offset, offset + limit);
-      
-      console.log(`Returning ${paginatedResults.length} novels after pagination`);
-      
-      return paginatedResults;
+        .where(
+          and(
+            eq(novels.status, "published"),
+            // Using sql template for case-insensitive check within the array
+            sql`${genreLower} = ANY(lower(novels.genres)::text[])` // Cast genres to text array for lower()
+          )
+        )
+        .limit(limit) // Apply limit in the query
+        .offset(offset)) as Novel[]; // <-- Explicit type assertion here
+
+      console.log(`Fetched ${novelsByGenre.length} novels for genre: ${genre}`);
+
+      return novelsByGenre;
+
     } catch (error) {
       console.error(`Error in getNovelsByGenre for genre ${genre}:`, error);
-      // Return empty array on error rather than crashing
+      // Return empty array on error
       return [];
     }
   }
