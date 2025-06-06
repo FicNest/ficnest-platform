@@ -10,7 +10,7 @@ import {
   authMapping, type AuthMapping, type InsertAuthMapping
 } from "../shared/schema.js";
 import { db, pool } from "./db.js";
-import { eq, and, desc, isNull, isNotNull, inArray, sql, asc } from "drizzle-orm";
+import { eq, and, desc, isNull, isNotNull, inArray, sql, asc, avg } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
@@ -183,18 +183,61 @@ export class DatabaseStorage implements IStorage {
 
   async getNovels(limit: number, offset: number, sortBy?: string, sortOrder?: string): Promise<Novel[]> {
     try {
-      // Chain the query methods directly, including limit and offset
-      const novelsResult = await db
-        .select()
+      let query = db
+        .select({
+          id: novels.id,
+          title: novels.title,
+          description: novels.description,
+          coverImage: novels.coverImage,
+          authorId: novels.authorId,
+          genres: novels.genres,
+          status: novels.status,
+          contentRating: novels.contentRating,
+          viewCount: novels.viewCount,
+          bookmarkCount: novels.bookmarkCount,
+          createdAt: novels.createdAt,
+          updatedAt: novels.updatedAt,
+          // Calculate average rating and count reviews
+          averageRating: sql<number | null>`avg(${reviews.rating})`.as('averageRating'),
+          reviewCount: sql<number>`count(${reviews.rating})`.as('reviewCount')
+        })
         .from(novels)
+        .leftJoin(reviews, eq(novels.id, reviews.novelId))
         .where(eq(novels.status, "published"))
-        .orderBy(desc(novels.createdAt))
-        .limit(limit)   // Chaining limit directly
-        .offset(offset); // Chaining offset directly
+        .groupBy(novels.id);
 
-      console.log(`Fetched ${novelsResult.length} published novels with pagination`); // Add a log for confirmation
+      // Determine the column and order for sorting
+      let orderByClause;
+      const order = sortOrder === 'asc' ? asc : desc;
+      const orderSql = sortOrder === 'asc' ? sql`ASC` : sql`DESC`;
 
-      return novelsResult; // Return the awaited result
+      switch (sortBy) {
+        case 'viewCount':
+          orderByClause = order(novels.viewCount);
+          break;
+        case 'bookmarkCount':
+          orderByClause = order(novels.bookmarkCount);
+          break;
+        case 'rating':
+          // Sort primarily by the number of reviews (descending), then by average rating, then createdAt
+          const reviewCountOrder = desc(sql`count(${reviews.rating})`);
+          // Keep average rating as a secondary sort and for potential display
+          const ratingOrder = desc(sql`avg(${reviews.rating})`);
+          orderByClause = [reviewCountOrder, ratingOrder, desc(novels.createdAt)];
+          break;
+        default:
+          // Default sort by creation date
+          orderByClause = desc(novels.createdAt);
+      }
+
+      // Apply ordering, limit, and offset
+      // Need to cast query to 'any' for the complex orderBy clause
+      const novelsResult = await (query as any).orderBy(...(Array.isArray(orderByClause) ? orderByClause : [orderByClause])).limit(limit).offset(offset);
+
+      console.log(`Fetched ${novelsResult.length} published novels with pagination, sorted by ${sortBy || 'createdAt'} ${sortOrder || 'desc'}`);
+      console.log('Server-side getNovels result (first 10):', novelsResult.slice(0, 10)); // Log first 10 novels for brevity
+
+      return novelsResult as Novel[]; // Cast back to Novel[] for consistency
 
     } catch (error) {
       console.error("Error in getNovels:", error);

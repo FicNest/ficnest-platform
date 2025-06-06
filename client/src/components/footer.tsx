@@ -45,6 +45,7 @@ export default function Footer() {
                 <li><Link href="/profile" className="hover:text-primary transition">My Profile</Link></li>
                 <li><Link href="/bookmarks" className="hover:text-primary transition">Bookmarks</Link></li>
                 <li><Link href="/reading-history" className="hover:text-primary transition">Reading History</Link></li>
+                <li><Link href="/ranking" className="hover:text-primary transition">Ranking Page</Link></li>
               </ul>
             </div>
             

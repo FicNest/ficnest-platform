@@ -33,6 +33,8 @@ import Footer from "@/components/footer";
 import AuthorProfilePage from "@/pages/author-profile-page";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import BrowsePage from "@/pages/browse-page";
+import RankingPage from "@/pages/ranking-page";
 
 function Router() {
   const [location] = useLocation();
@@ -108,6 +110,11 @@ function Router() {
               {() => <ReadingHistoryPage />}
             </Route>
 
+            {/* Ranking Page Route */}
+            <Route path="/ranking">
+              {() => <RankingPage />}
+            </Route>
+
             <Route path="/authors/:id">
               {() => <AuthorProfilePage />}
             </Route>
@@ -148,6 +155,10 @@ function Router() {
             
             <Route path="/guidelines">
               {() => <ContentGuidelinesPage />}
+            </Route>
+            
+            <Route path="/browse">
+              {() => <BrowsePage />}
             </Route>
             
             <Route>

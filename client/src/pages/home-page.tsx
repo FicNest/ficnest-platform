@@ -173,6 +173,19 @@ export default function HomePage() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
+  // Fetch top 10 novels by views
+  const { data: topNovels, isLoading: isLoadingTop } = useQuery<Novel[]>({
+    queryKey: ['/api/novels/top'],
+    queryFn: async () => {
+      const res = await fetch('/api/novels?sortBy=viewCount&sortOrder=desc&limit=10');
+      if (!res.ok) {
+        throw new Error(`Error fetching top novels: ${res.statusText}`);
+      }
+      return await res.json();
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+  
   // If user is logged in, fetch continue reading with author data
   const { data: continueReading } = useQuery<ContinueReadingProps['readingProgress']>({
     queryKey: ['/api/reading-progress/latest'],
@@ -228,25 +241,12 @@ export default function HomePage() {
         <div className="mb-12">
            {/* Header with Title and Navigation */}
           <div className="flex items-center justify-between mb-6">
-             <h2 className="text-2xl font-bold">Featured Novels</h2>
+             <h2 className="text-2xl font-bold">Latest Fan-Fics</h2>
              {/* Navigation Buttons positioned here */}
                {featuredNovels && featuredNovels.length > 0 && (
-                 <div className="flex items-center gap-2">
-                   <button 
-                     onClick={() => emblaApi && emblaApi.scrollPrev()} 
-                     disabled={emblaApi ? !emblaApi.canScrollPrev() : true} 
-                     className="bg-white rounded-full p-1 shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                   >
-                     <ChevronLeft size={20} />{/* Reduced icon size */}
-                   </button>
-                   <button 
-                     onClick={() => emblaApi && emblaApi.scrollNext()} 
-                     disabled={emblaApi ? !emblaApi.canScrollNext() : true} 
-                     className="bg-white rounded-full p-1 shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                   >
-                     <ChevronRight size={20} />{/* Reduced icon size */}
-                   </button>
-                 </div>
+                 <Link href="/browse">
+                   <Button variant="outline">View More</Button>
+                 </Link>
               )}
           </div>
           
@@ -271,6 +271,50 @@ export default function HomePage() {
               <Carousel setApi={setEmblaApi} opts={{ align: 'start', dragFree: true }}>
                 <CarouselContent>
                   {featuredNovels?.map((novel) => (
+                    <CarouselItem key={novel.id} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6 2xl:w-1/6 mr-4">
+                      <NovelCard novel={novel} />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+          )}
+        </div>
+
+        {/* Top Novels Section */}
+        <div className="mb-12">
+          {/* Header with Title and Navigation */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Top Fan-Fics</h2>
+            {/* Navigation Buttons positioned here */}
+            {topNovels && topNovels.length > 0 && (
+              <Link href="/ranking">
+                <Button variant="outline">View More</Button>
+              </Link>
+            )}
+          </div>
+          
+          {isLoadingTop ? (
+            // Loading skeleton
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-6 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <Skeleton className="w-full h-56" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="relative">
+              {/* Carousel Container */}
+              <Carousel setApi={setEmblaApi} opts={{ align: 'start', dragFree: true }}>
+                <CarouselContent>
+                  {topNovels?.map((novel) => (
                     <CarouselItem key={novel.id} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6 2xl:w-1/6 mr-4">
                       <NovelCard novel={novel} />
                     </CarouselItem>

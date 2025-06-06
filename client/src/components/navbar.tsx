@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Menu, X, BookOpen, ChevronDown, LogOut, User, BookmarkIcon, History, BookPlus, PenSquare, Search, Tag } from "lucide-react";
+import { Menu, X, BookOpen, ChevronDown, LogOut, User, BookmarkIcon, History, BookPlus, PenSquare, Search, Tag, Star } from "lucide-react";
 import { AuthModal } from "@/components/auth-modal"; // Import the AuthModal component
 import {
   Select,
@@ -186,6 +186,12 @@ export default function Navbar() {
                       <Link href="/reading-history" className="cursor-pointer">
                         <History className="mr-2 h-4 w-4" />
                         Reading History
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/ranking" className="cursor-pointer">
+                        <Star className="mr-2 h-4 w-4" />
+                        Ranking Page
                       </Link>
                     </DropdownMenuItem>
                     

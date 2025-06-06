@@ -329,10 +329,8 @@ export default function BookmarksPage() {
               <p className="text-gray-500 mb-6">
                 You haven't bookmarked any novels yet. Browse novels to add some to your bookmarks.
               </p>
-              <Link to="/">
-                <Button>
-                  Browse Novels
-                </Button>
+              <Link href="/browse">
+                <Button>Browse Novels</Button>
               </Link>
             </>
           )}
