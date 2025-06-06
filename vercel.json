@@ -15,6 +15,7 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/server/index.ts" },
+    { "src": "/auth/callback", "dest": "/server/index.ts" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
