@@ -71,6 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes (replaces cacheTime)
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch when component mounts
+    refetchOnReconnect: false, // Don't refetch when reconnecting
   });
 
   // Create refetchUser function that returns a promise

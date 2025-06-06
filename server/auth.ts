@@ -5,10 +5,11 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
 import { storage } from "./storage.js";
-import { User as SelectUser, insertUserSchema } from "../shared/schema.js";
+import { User as SelectUser, insertUserSchema, User } from "../shared/schema.js";
 import { z } from "zod";
 import { hashPassword, comparePasswords } from "./utils/passwordUtils.js";
 import { supabase as supabaseServer } from "./lib/supabaseServer.js";
+import NodeCache from 'node-cache';
 
 declare global {
   namespace Express {
@@ -26,6 +27,9 @@ const registerUserSchema = insertUserSchema
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+// Create a cache with 5 minute TTL
+const userCache = new NodeCache({ stdTTL: 300 });
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
@@ -80,8 +84,23 @@ export function setupAuth(app: Express) {
   
   passport.deserializeUser(async (id: number, done) => {
     try {
-      console.log("Deserializing user:", id);
+      // Check cache first
+      const cachedUser = userCache.get(id);
+      if (cachedUser && typeof cachedUser === 'object' && cachedUser !== null && 'id' in cachedUser && 'email' in cachedUser) {
+        console.log("Retrieved user from cache:", id);
+        // Type assertion here because we've checked for key properties
+        return done(null, cachedUser as User);
+      }
+
+      console.log("Attempting to deserialize user with ID:", id);
       const user = await storage.getUser(id);
+      if (user) {
+        // Cache the user
+        userCache.set(id, user);
+        console.log("Successfully deserialized and cached user:", user.id);
+      } else {
+        console.log("Deserialization failed: User not found for ID", id);
+      }
       done(null, user);
     } catch (error) {
       console.error("Error deserializing user:", error);

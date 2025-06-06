@@ -30,14 +30,22 @@ export const pool = new Pool({
   ssl: isProduction ? {
     rejectUnauthorized: false  // This accepts self-signed certificates
   } : false,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  max: 20, // Maximum number of clients in the pool
+  idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
+  connectionTimeoutMillis: 10000, // How long to wait for a connection
 });
 
-// Test the connection
+// Add connection pool monitoring
 pool.on('connect', (client) => {
   console.log('Connected to PostgreSQL database');
+});
+
+pool.on('acquire', (client) => {
+  console.log('Client acquired from pool');
+});
+
+pool.on('remove', (client) => {
+  console.log('Client removed from pool');
 });
 
 pool.on('error', (err, client) => {
