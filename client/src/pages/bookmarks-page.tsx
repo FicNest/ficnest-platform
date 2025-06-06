@@ -257,83 +257,72 @@ export default function BookmarksPage() {
   return (
     <BookmarkCard>
       {filteredBookmarks.length > 0 ? (
-        <div className="space-y-4">
-          {filteredBookmarks.map((bookmark) => {
-            if (!bookmark.novel) return null;
-            const { id: novelId, coverImage, title, authorId, authorName, description, rating } = bookmark.novel;
-            return (
-              <div
-                key={bookmark.id}
-                className="flex items-start gap-4 border-b border-gray-100 dark:border-gray-800 pb-4 last:border-b-0 last:pb-0"
-              >
-                <Link to={`/novels/${novelId}`} className="flex-shrink-0">
-                  {coverImage ? (
-                    <img
-                      src={coverImage}
-                      alt={`${title} cover`}
-                      className="w-20 h-28 object-cover rounded-md shadow-sm bg-gray-200 dark:bg-gray-900"
-                    />
-                  ) : (
-                    <div className="w-20 h-28 bg-gray-200 dark:bg-gray-900 flex items-center justify-center rounded-md shadow-sm">
-                      <BookOpen className="text-gray-400" size={32} />
-                    </div>
-                  )}
+        <div className="space-y-6">
+          {filteredBookmarks.map((bookmark) => (
+            <div key={bookmark.id} className="flex items-start gap-4 border-b border-gray-100 pb-6 last:border-b-0 last:pb-0 flex-row">
+              <Link to={`/novels/${encodeURIComponent(bookmark.novel?.title || '')}`} className="flex-shrink-0">
+                {bookmark.novel?.coverImage ? (
+                  <img
+                    src={bookmark.novel.coverImage}
+                    alt={`${bookmark.novel.title} cover`}
+                    className="w-20 h-28 object-cover rounded-md shadow-sm bg-gray-200 dark:bg-gray-900"
+                  />
+                ) : (
+                  <div className="w-20 h-28 bg-gray-200 dark:bg-gray-900 flex items-center justify-center rounded-md shadow-sm">
+                    <BookOpen className="text-gray-400" size={32} />
+                  </div>
+                )}
+              </Link>
+              <div className="flex-1 min-w-0">
+                <Link to={`/novels/${encodeURIComponent(bookmark.novel?.title || '')}`} className="block">
+                  <h3 className="font-semibold text-base mb-1 hover:text-primary transition text-gray-900 dark:text-gray-100 truncate">
+                    {bookmark.novel?.title || `Novel ${bookmark.novelId}`}
+                  </h3>
                 </Link>
-                <div className="flex-1 min-w-0">
-                  <Link to={`/novels/${novelId}`} className="block">
-                    <h3 className="font-semibold text-base mb-1 hover:text-primary transition text-gray-900 dark:text-gray-100 truncate">
-                      {title}
-                    </h3>
-                  </Link>
-                  <p className="text-gray-600 dark:text-gray-400 text-xs mb-1 truncate">
-                    by <Link to={`/authors/${authorId}`} className="hover:text-primary">{authorName || "Unknown Author"}</Link>
-                  </p>
-                  <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-2 mb-1">{description}</p>
-                  {rating && (
-                    <div className="flex items-center gap-1 text-yellow-500 text-xs mt-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-500" />
-                      <span>{rating.toFixed(1)}</span>
-                    </div>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeBookmark(novelId)}
-                  aria-label="Remove bookmark"
-                  className="mt-1"
-                >
-                  <Trash2 className="h-5 w-5 text-red-500" />
-                </Button>
+                <p className="text-gray-600 dark:text-gray-400 text-xs mb-1 line-clamp-2">
+                  {bookmark.novel?.description || "No description available."}
+                </p>
+                <p className="text-gray-600 dark:text-gray-400 text-xs mb-1 truncate">
+                  by {bookmark.novel?.authorName || "Unknown Author"}
+                </p>
+                {/* Optionally add rating display back here if needed, with styling */}
+                {/* <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-auto">
+                  <Star className="h-4 w-4 mr-1 text-yellow-400" fill="yellow" />
+                  <span>{bookmark.novel?.rating?.toFixed(1) || 'N/A'}</span>
+                </div> */}
               </div>
-            );
-          })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => removeBookmark(bookmark.novelId)}
+                className="text-red-500 hover:text-red-700 flex-shrink-0"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      ) : searchQuery.trim() ? (
+        <div className="text-center py-10">
+          <h3 className="text-xl font-medium text-gray-900 mb-2">No matching bookmarks</h3>
+          <p className="text-gray-500 mb-6">
+            No bookmarks match your search criteria. Try a different search term.
+          </p>
+          <Button onClick={() => setSearchQuery("")}>
+            Clear Search
+          </Button>
         </div>
       ) : (
         <div className="text-center py-10">
           <Bookmark className="mx-auto h-16 w-16 text-gray-300 mb-6" />
           
-          {searchQuery ? (
-            <>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No matching bookmarks</h3>
-              <p className="text-gray-500 mb-6">
-                No bookmarks match your search criteria. Try a different search term.
-              </p>
-              <Button onClick={() => setSearchQuery("")}>
-                Clear Search
-              </Button>
-            </>
-          ) : (
-            <>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No bookmarks yet</h3>
-              <p className="text-gray-500 mb-6">
-                You haven't bookmarked any novels yet. Browse novels to add some to your bookmarks.
-              </p>
-              <Link href="/browse">
-                <Button>Browse Novels</Button>
-              </Link>
-            </>
-          )}
+          <h3 className="text-xl font-medium text-gray-900 mb-2">No bookmarks yet</h3>
+          <p className="text-gray-500 mb-6">
+            You haven't bookmarked any novels yet. Browse novels to add some to your bookmarks.
+          </p>
+          <Link href="/browse">
+            <Button>Browse Novels</Button>
+          </Link>
         </div>
       )}
     </BookmarkCard>

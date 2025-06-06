@@ -14,14 +14,14 @@ import { Chapter, Novel, User } from "@shared/schema";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Define the URL route pattern to match both novelId and chapterNumber
-const chapterRoute = "/novels/:novelId/chapters/:chapterNumber";
+// Define the URL route pattern to match both novelName and chapterNumber
+const chapterRoute = "/novels/:novelName/chapters/:chapterNumber";
 
 export default function ChapterPage() {
   const [match, params] = useRoute(chapterRoute);
   const [, navigate] = useLocation();
+  const { user } = useAuth();
   const { toast } = useToast();
-  const { user, isLoading: isLoadingUser } = useAuth();
   const [novelProgress, setNovelProgress] = useState(0);
   const [isProcessingProgress, setIsProcessingProgress] = useState(false);
   const [fontSize, setFontSize] = useState(18);
@@ -156,49 +156,19 @@ export default function ChapterPage() {
     };
   }, [toast, user]);
   
-  // Get novelId and chapterNumber from params
-  const novelId = match ? Number(params?.novelId) : 0;
+  // Get the novel name and chapter number from params
+  const novelName = match ? params?.novelName : '';
   const chapterNumber = match ? Number(params?.chapterNumber) : 0;
   
-  // Log route parameters
-  console.log("ChapterPage - Route Params:", { novelId, chapterNumber });
-  
-  // Scroll to top whenever chapterId changes
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [novelId, chapterNumber]);
-  
-  // Fetch chapter data
-  const { 
-    data: chapter, 
-    isLoading: isLoadingChapter, 
-    error: chapterError 
-  } = useQuery<Chapter>({
-    queryKey: [`novel-${novelId}-chapter-${chapterNumber}`], // Use stable query key
-    queryFn: async () => {
-      try {
-        const res = await fetch(`/api/novels/${novelId}/chapters/${chapterNumber}`);
-        if (!res.ok) throw new Error("Failed to fetch chapter");
-        return res.json();
-      } catch (error) {
-        console.error("Error fetching chapter:", error);
-        throw error;
-      }
-    },
-    enabled: !!novelId && !!chapterNumber,
-    retry: 1, // Limit retries
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-  
-  // Fetch novel data
+  // Fetch novel data by name
   const { 
     data: novel, 
     isLoading: isLoadingNovel 
   } = useQuery<Novel>({
-    queryKey: [`novel-${novelId}`], // Use stable query key
+    queryKey: [`novel-name-${novelName}`],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/novels/${novelId}`);
+        const res = await fetch(`/api/novels/name/${novelName}`);
         if (!res.ok) throw new Error("Failed to fetch novel");
         return res.json();
       } catch (error) {
@@ -206,11 +176,33 @@ export default function ChapterPage() {
         throw error;
       }
     },
-    enabled: !!novelId,
-    retry: 1, // Limit retries
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!novelName,
+    retry: 1,
+    staleTime: 1000 * 60 * 5,
   });
 
+  // Fetch chapter data
+  const { 
+    data: chapter, 
+    isLoading: isLoadingChapter, 
+    error: chapterError 
+  } = useQuery<Chapter>({
+    queryKey: [`novel-${novel?.id}-chapter-${chapterNumber}`],
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/novels/${novel?.id}/chapters/${chapterNumber}`);
+        if (!res.ok) throw new Error("Failed to fetch chapter");
+        return res.json();
+      } catch (error) {
+        console.error("Error fetching chapter:", error);
+        throw error;
+      }
+    },
+    enabled: !!novel?.id && !!chapterNumber,
+    retry: 1,
+    staleTime: 1000 * 60 * 5,
+  });
+  
   // Fetch author data
   const { 
     data: author,
@@ -237,10 +229,10 @@ export default function ChapterPage() {
     data: chapters, 
     isLoading: isLoadingChapters 
   } = useQuery<Chapter[]>({
-    queryKey: [`novel-chapters-${novelId}`], // Use stable query key
+    queryKey: [`novel-chapters-${novel?.id}`], // Use stable query key
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/novels/${novelId}/chapters`);
+        const res = await fetch(`/api/novels/${novel?.id}/chapters`);
         if (!res.ok) throw new Error("Failed to fetch chapters");
         return res.json();
       } catch (error) {
@@ -248,7 +240,7 @@ export default function ChapterPage() {
         return []; // Return empty array instead of throwing
       }
     },
-    enabled: !!novelId,
+    enabled: !!novel?.id,
     retry: 1, // Limit retries
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -259,7 +251,13 @@ export default function ChapterPage() {
   // Find previous and next chapters with memoization
   const { prevChapter, nextChapter } = useCallback(() => {
     // Log data within useCallback
-    console.log("useCallback - Data:", { chapters, chapter, novelId, chapterNumber });
+    const novelId = novel?.id;
+    console.log("useCallback - Data:", { 
+      chapters, 
+      chapter, 
+      novelId, 
+      chapterNumber 
+    });
 
     if (!chapters || !chapter || !Array.isArray(chapters)) {
       console.log("useCallback - Missing data, returning undefined");
@@ -268,7 +266,7 @@ export default function ChapterPage() {
     
     try {
       // Find the index based on chapterNumber, as ID is no longer reliable for order after migration
-      const currentIndex = chapters.findIndex(c => c.novelId === novelId && c.chapterNumber === chapterNumber);
+      const currentIndex = chapters.findIndex(c => c.novelId === novel?.id && c.chapterNumber === chapterNumber);
       console.log("useCallback - currentIndex:", currentIndex);
 
       if (currentIndex === -1) {
@@ -287,7 +285,7 @@ export default function ChapterPage() {
       console.error("useCallback - Error finding prev/next chapters:", error);
       return { prevChapter: undefined, nextChapter: undefined };
     }
-  }, [chapters, chapter, novelId, chapterNumber])();
+  }, [chapters, chapter, novel?.id, chapterNumber])();
   
   // Calculate novel progress based on current chapter number and total chapters
   useEffect(() => {
@@ -297,7 +295,7 @@ export default function ChapterPage() {
       
       if (publishedChapters.length > 0) {
         // Find the current chapter's index in the published chapters array
-        const currentChapterIndex = publishedChapters.findIndex(c => c.novelId === novelId && c.chapterNumber === chapterNumber);
+        const currentChapterIndex = publishedChapters.findIndex(c => c.novelId === novel?.id && c.chapterNumber === chapterNumber);
         
         if (currentChapterIndex !== -1) {
           // Calculate progress as (current chapter number) / (total published chapters) * 100
@@ -307,12 +305,14 @@ export default function ChapterPage() {
         }
       }
     }
-  }, [chapter, chapters, novelId, chapterNumber]);
+  }, [chapter, chapters, novel?.id, chapterNumber]);
   
-  // Function to navigate to a specific chapter using its novelId and chapterNumber
+  // Function to navigate to a specific chapter using its novel name and chapterNumber
   const navigateToChapter = useCallback((targetChapterNumber: number) => {
-    navigate(`/novels/${novelId}/chapters/${targetChapterNumber}`);
-  }, [navigate, novelId]);
+    if (novel) {
+      navigate(`/novels/${novelName}/chapters/${targetChapterNumber}`);
+    }
+  }, [navigate, novelName, novel]);
   
   // Keyboard navigation for chapters
   useEffect(() => {
@@ -683,7 +683,7 @@ export default function ChapterPage() {
         <div className="flex justify-between items-center mt-8">
           {/* Previous Chapter Button */}
           <Link 
-            to={prevChapter ? `/novels/${novelId}/chapters/${prevChapter.chapterNumber}` : ''}
+            to={prevChapter ? `/novels/${novel.id}/chapters/${prevChapter.chapterNumber}` : ''}
             onClick={(e) => {!prevChapter && e.preventDefault();}}
           >
             <Button variant="outline" size="default" disabled={!prevChapter}>
@@ -695,7 +695,7 @@ export default function ChapterPage() {
           
           {/* Next Chapter Button */}
           <Link 
-            to={nextChapter ? `/novels/${novelId}/chapters/${nextChapter.chapterNumber}` : ''}
+            to={nextChapter ? `/novels/${novel.id}/chapters/${nextChapter.chapterNumber}` : ''}
             onClick={(e) => {!nextChapter && e.preventDefault();}}
           >
             <Button variant="outline" size="default" disabled={!nextChapter}>
@@ -706,7 +706,7 @@ export default function ChapterPage() {
         </div>
         
         {/* Comments Section */}
-        <CommentSection novelId={novelId} chapterNumber={chapterNumber} novelAuthorId={novel.authorId} isAuthorDashboard={false} chapterId={chapter.id} />
+        <CommentSection novelId={novel.id} chapterNumber={chapterNumber} novelAuthorId={novel.authorId} isAuthorDashboard={false} chapterId={chapter.id} />
       </div>
       
       {/* Font Adjustment Panel */}

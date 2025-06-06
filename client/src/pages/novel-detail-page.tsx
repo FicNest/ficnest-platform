@@ -129,14 +129,16 @@ function ReviewItem({
 }
 
 // Chapter item with delete button component
-function ChapterItem({ 
-  chapter, 
+function ChapterItem({
+  chapter,
   isAuthor,
-  onDelete
-}: { 
+  onDelete,
+  novelTitle,
+}: {
   chapter: Chapter;
   isAuthor: boolean;
   onDelete: (chapterId: number) => void;
+  novelTitle: string;
 }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -148,7 +150,7 @@ function ChapterItem({
   return (
     <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
       <div>
-        <Link to={`/novels/${chapter.novelId}/chapters/${chapter.chapterNumber}`} className="font-medium hover:text-primary transition">
+        <Link to={`/novels/${encodeURIComponent(novelTitle)}/chapters/${chapter.chapterNumber}`} className="font-medium hover:text-primary transition">
           <span>Chapter {chapter.chapterNumber}:</span> <span>{chapter.title}</span>
         </Link>
         <div className="text-sm text-gray-500 mt-1">
@@ -207,19 +209,24 @@ function ChapterItem({
 }
 
 export default function NovelDetailPage() {
-  const [match, params] = useRoute("/novels/:id");
+  const [match, params] = useRoute("/novels/:novelName");
   const { user } = useAuth();
   const { toast } = useToast();
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1); // State for current page
   const chaptersPerPage = 50; // Chapters per page
   
-  // Safely get the novel ID or default to 0 if no match
-  const novelId = match ? Number(params?.id) : 0;
+  // Get the novel name from params
+  const novelName = match ? params?.novelName : '';
   
-  // Fetch novel details
+  // Fetch novel details by name
   const { data: novel, isLoading: isLoadingNovel } = useQuery<NovelWithReviews>({
-    queryKey: [`/api/novels/${novelId}`],
+    queryKey: [`/api/novels/name/${novelName}`],
+    queryFn: async () => {
+      const res = await fetch(`/api/novels/name/${novelName}`);
+      if (!res.ok) throw new Error("Failed to fetch novel");
+      return res.json();
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
@@ -236,14 +243,14 @@ export default function NovelDetailPage() {
   
   // Fetch chapters separately
   const { data: chapters, isLoading: isLoadingChapters } = useQuery<Chapter[]>({
-    queryKey: [`/api/novels/${novelId}/chapters`],
-    enabled: !!novelId,
+    queryKey: [`/api/novels/${novel?.id}/chapters`],
+    enabled: !!novel?.id,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
   // Check if user has bookmarked this novel
   const { data: bookmarkStatus } = useQuery<Bookmark | null>({
-    queryKey: [`/api/bookmarks/${novelId}`],
+    queryKey: [`/api/bookmarks/${novel?.id}`],
     enabled: !!user,
   });
   
@@ -251,15 +258,15 @@ export default function NovelDetailPage() {
   const bookmarkMutation = useMutation({
     mutationFn: async () => {
       if (bookmarkStatus) {
-        await apiRequest("DELETE", `/api/bookmarks/${novelId}`);
+        await apiRequest("DELETE", `/api/bookmarks/${novel?.id}`);
         return null;
       } else {
-        const res = await apiRequest("POST", "/api/bookmarks", { novelId });
+        const res = await apiRequest("POST", "/api/bookmarks", { novelId: novel?.id });
         return await res.json();
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/bookmarks/${novelId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/bookmarks/${novel?.id}`] });
       toast({
         title: bookmarkStatus ? "Bookmark removed" : "Novel bookmarked",
         description: bookmarkStatus 
@@ -278,7 +285,7 @@ export default function NovelDetailPage() {
   
   // Get user's review if exists
   const { data: userReview } = useQuery<Review>({
-    queryKey: [`/api/novels/${novelId}/reviews/user`],
+    queryKey: [`/api/novels/${novel?.id}/reviews/user`],
     enabled: !!user,
   });
   
@@ -300,11 +307,11 @@ export default function NovelDetailPage() {
   
   const reviewMutation = useMutation({
     mutationFn: async (data: ReviewFormValues) => {
-      const res = await apiRequest("POST", `/api/novels/${novelId}/reviews`, data);
+      const res = await apiRequest("POST", `/api/novels/${novel?.id}/reviews`, data);
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novelId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novel?.id}`] });
       setIsReviewDialogOpen(false);
       toast({
         title: userReview ? "Review updated" : "Review submitted",
@@ -326,7 +333,7 @@ export default function NovelDetailPage() {
       return await apiRequest("DELETE", `/api/reviews/${reviewId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novelId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novel?.id}`] });
       toast({
         title: "Review deleted",
         description: "The review has been successfully deleted",
@@ -356,7 +363,7 @@ export default function NovelDetailPage() {
       await apiRequest("DELETE", `/api/chapters/${chapterId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novelId}/chapters`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/novels/${novel?.id}/chapters`] });
       toast({
         title: "Chapter deleted",
         description: "The chapter has been successfully deleted",
@@ -504,11 +511,13 @@ export default function NovelDetailPage() {
               </div>
               
               <div className="flex flex-wrap gap-3">
-                <Link to={firstChapter ? `/novels/${novelId}/chapters/${firstChapter.chapterNumber}` : '#'}>
-                  <Button disabled={!firstChapter}>
-                    Start Reading
-                  </Button>
-                </Link>
+                {firstChapter && (
+                  <Link to={`/novels/${encodeURIComponent(novel.title)}/chapters/${firstChapter.chapterNumber}`}>
+                    <Button>
+                      Start Reading
+                    </Button>
+                  </Link>
+                )}
                 
                 {user && (
                   <Button
@@ -536,11 +545,12 @@ export default function NovelDetailPage() {
           ) : (
             <div className="space-y-4">
               {currentChapters.map((chapter) => (
-                <ChapterItem 
-                  key={chapter.id} 
+                <ChapterItem
+                  key={chapter.id}
                   chapter={chapter}
                   isAuthor={!!isAuthor}
                   onDelete={handleDeleteChapter}
+                  novelTitle={novel.title}
                 />
               ))}
             </div>

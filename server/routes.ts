@@ -234,7 +234,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get single novel
+  // Get single novel by name
+  app.get("/api/novels/name/:name", async (req, res) => {
+    try {
+      const name = req.params.name;
+      
+      // Check if novel exists
+      const novel = await storage.getNovelByName(name);
+      if (!novel) {
+        return res.status(404).json({ message: "Novel not found" });
+      }
+      
+      // Increment view count
+      await storage.incrementNovelViews(novel.id);
+      
+      // Get reviews with user information
+      const reviews = await storage.getReviewsByNovel(novel.id);
+      
+      // Add user information to each review
+      const reviewsWithUsers = await Promise.all(
+        reviews.map(async (review) => {
+          try {
+            const user = await storage.getUser(review.userId);
+            return {
+              ...review,
+              user: user ? {
+                id: user.id,
+                username: user.username
+              } : {
+                id: review.userId,
+                username: `User ${review.userId}`
+              }
+            };
+          } catch (error) {
+            console.error(`Error fetching user for review ${review.id}:`, error);
+            return {
+              ...review,
+              user: {
+                id: review.userId,
+                username: `User ${review.userId}`
+              }
+            };
+          }
+        })
+      );
+      
+      // Add reviews to novel
+      const novelWithReviews = {
+        ...novel,
+        reviews: reviewsWithUsers
+      };
+      
+      // Return novel with reviews
+      res.json(novelWithReviews);
+    } catch (error) {
+      console.error("Error fetching novel by name:", error);
+      res.status(500).json({ message: "Error fetching novel" });
+    }
+  });
+
+  // Get single novel by ID (keep for backward compatibility)
   app.get("/api/novels/:id", async (req, res) => {
     try {
       const id = Number(req.params.id);

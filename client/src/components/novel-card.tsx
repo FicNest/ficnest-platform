@@ -16,11 +16,6 @@ interface Author {
   username: string;
 }
 
-interface Review {
-  id: number;
-  rating: number;
-}
-
 export default function NovelCard({ novel }: NovelCardProps) {
   const isMobile = useIsMobile();
   
@@ -33,25 +28,23 @@ export default function NovelCard({ novel }: NovelCardProps) {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
-  // Calculate average rating from reviews (if available)
-  const { data: reviews } = useQuery<Review[]>({
-    queryKey: [`/api/novels/${novel.id}/reviews`],
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-  
-  const averageRating = reviews && reviews.length > 0
-    ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length 
-    : 0;
-  
   // Use provided authorName or fetch from query
   const authorDisplayName = novel.authorName || (author ? author.username : "Author");
   
   // Limit is 2 for mobile, 3 for desktop
   const tagLimit = isMobile ? 2 : 3;
   
+  // Handle case where novel might be null or undefined
+  if (!novel) {
+    return null; // Or render a skeleton/placeholder
+  }
+
+  // Use novel.title for the link
+  const novelLink = `/novels/${encodeURIComponent(novel.title)}`;
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition w-full h-full">
-      <Link to={`/novels/${novel.id}`}>
+      <Link to={novelLink}>
         {/* Image container with fixed aspect ratio */}
         <div className="w-full relative" style={{ paddingBottom: '150%' }}> {/* 2:3 aspect ratio (height is 150% of width)*/}
            {novel.coverImage ? (
@@ -68,13 +61,12 @@ export default function NovelCard({ novel }: NovelCardProps) {
         </div>
       </Link>
       <div className="p-4">
-        <Link to={`/novels/${novel.id}`} className="block">
+        <Link to={novelLink} className="block">
           {/* Fixed size title with truncation */}
           <h3 className="font-semibold text-lg mb-1 hover:text-primary transition overflow-hidden text-ellipsis whitespace-nowrap">{novel.title}</h3>{/* Reduced text size */}
         </Link>
         
-        {/* Removed Author, Genres, and Stats */}
-        {/*
+        
         <p className="text-gray-600 text-sm mb-2">
           by{" "}
           <Link to={`/authors/${novel.authorId}`} className="hover:text-primary">
@@ -107,18 +99,12 @@ export default function NovelCard({ novel }: NovelCardProps) {
               : novel.viewCount}
             </span>
           </div>
-          <div className="flex items-center">
+          {/* Remove bookmark and rating display */}
+          {/* <div className="flex items-center">
             <BookmarkIcon className="mr-1 h-4 w-4" />
             <span>{novel.bookmarkCount}</span>
-          </div>
-          {reviews && reviews.length > 0 && (
-            <div className="flex items-center text-yellow-500">
-              <Star className="mr-1 h-4 w-4" />
-              <span>{averageRating.toFixed(1)}</span>
-            </div>
-          )}
+          </div> */}
         </div>
-        */}
       </div>
     </div>
   );

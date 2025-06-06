@@ -77,11 +77,11 @@ function Router() {
               {() => <AuthPage />}
             </Route>
             
-            <Route path="/novels/:id">
+            <Route path="/novels/:novelName">
               <NovelDetailPage />
             </Route>
             
-            <Route path="/novels/:novelId/chapters/:chapterNumber">
+            <Route path="/novels/:novelName/chapters/:chapterNumber">
               <ChapterPage />
             </Route>
             

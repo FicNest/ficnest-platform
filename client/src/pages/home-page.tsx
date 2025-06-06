@@ -95,7 +95,7 @@ function ContinueReading({ readingProgress }: ContinueReadingProps) {
             </p>
           </div>
           
-          <Link to={`/novels/${readingProgress.novelId}/chapters/${readingProgress.chapter.chapterNumber}`}>
+          <Link to={`/novels/${readingProgress.novel.title}/chapters/${readingProgress.chapter.chapterNumber}`}>
             <Button>
               Continue Reading
             </Button>

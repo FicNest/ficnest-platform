@@ -105,6 +105,9 @@ export interface IStorage {
   
   // Session store
   sessionStore: any;
+
+  // Get novel by name
+  getNovelByName(name: string): Promise<Novel | null>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1062,6 +1065,17 @@ export class DatabaseStorage implements IStorage {
   async deleteUser(id: number): Promise<boolean> {
     const result = await db.delete(users).where(eq(users.id, id));
     return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Get novel by name
+  async getNovelByName(name: string): Promise<Novel | null> {
+    try {
+      const result = await db.select().from(novels).where(eq(novels.title, name)).limit(1);
+      return result[0] || null;
+    } catch (error) {
+      console.error("Error getting novel by name:", error);
+      return null;
+    }
   }
 }
 

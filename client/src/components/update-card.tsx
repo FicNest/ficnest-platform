@@ -80,7 +80,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
   return (
     <div className="flex items-start gap-3 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
       {/* Book cover - with flex-shrink-0 to prevent it from shrinking */}
-      <Link to={`/novels/${novel.id}`} className="flex-shrink-0">
+      <Link to={`/novels/${encodeURIComponent(novel.title)}`} className="flex-shrink-0">
         {novel.coverImage ? (
           <img 
             src={novel.coverImage} 
@@ -101,7 +101,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
           {/* Title and author */}
           <div className="min-w-0">
             <h3 className="font-semibold text-lg hover:text-primary transition truncate">
-              <Link to={`/novels/${novel.id}`}>{novel.title}</Link>
+              <Link to={`/novels/${encodeURIComponent(novel.title)}`}>{novel.title}</Link>
             </h3>
             <p className="text-sm text-gray-600 truncate">
               by{" "}
@@ -123,7 +123,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
         {/* Chapter link - on its own row */}
         <div className="mt-2">
           <Link 
-            to={`/novels/${chapter.novelId}/chapters/${chapter.chapterNumber}`} 
+            to={`/novels/${encodeURIComponent(novel.title)}/chapters/${chapter.chapterNumber}`} 
             className="text-primary hover:underline"
           >
             <span className="block truncate">

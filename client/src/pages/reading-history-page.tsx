@@ -183,7 +183,7 @@ export default function ReadingHistoryPage() {
                   key={item.id}
                   className="flex items-start gap-4 border-b border-gray-100 pb-6 last:border-b-0 last:pb-0 flex-row"
                 >
-                  <Link to={`/novels/${item.novelId}`} className="flex-shrink-0">
+                  <Link to={`/novels/${item.novel?.title}`} className="flex-shrink-0">
                     {item.novel?.coverImage ? (
                       <img
                         src={item.novel.coverImage}
@@ -197,7 +197,7 @@ export default function ReadingHistoryPage() {
                     )}
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <Link to={`/novels/${item.novelId}`} className="block">
+                    <Link to={`/novels/${item.novel?.title}`} className="block">
                       <h3 className="font-semibold text-base mb-1 hover:text-primary transition text-gray-900 dark:text-gray-100 truncate">
                         {item.novel?.title || `Novel ${item.novelId}`}
                       </h3>
@@ -207,7 +207,7 @@ export default function ReadingHistoryPage() {
                     </p>
                     <p className="text-xs font-medium text-primary mb-1 truncate">
                       {item.chapter ? (
-                        <Link to={`/novels/${item.novelId}/chapters/${item.chapter.chapterNumber}`}>{`Chapter ${item.chapter.chapterNumber}: "${item.chapter.title}"`}</Link>
+                        <Link to={`/novels/${item.novel?.title}/chapters/${item.chapter.chapterNumber}`} className="text-primary hover:underline">{`Chapter ${item.chapter.chapterNumber}: "${item.chapter.title}"`}</Link>
                       ) : (
                         'Unavailable Chapter'
                       )}
@@ -225,7 +225,7 @@ export default function ReadingHistoryPage() {
                         Last read {formatTimeAgo(item.lastReadAt)}
                       </div>
                       <Link
-                        to={item.chapter ? `/novels/${item.novelId}/chapters/${item.chapter.chapterNumber}` : `/novels/${item.novelId}`}
+                        to={item.chapter ? `/novels/${item.novel?.title}/chapters/${item.chapter.chapterNumber}` : `/novels/${item.novel?.title}`}
                         onClick={(e) => {!item.chapter && e.preventDefault();}}
                       >
                         <Button size="sm" disabled={!item.chapter} className="mt-1">
