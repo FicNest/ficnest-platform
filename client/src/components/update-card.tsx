@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { Book } from "lucide-react";
 
 // Define the minimal interfaces needed
@@ -10,40 +9,26 @@ interface Chapter {
   novelId: number;
   content: string;
   updatedAt: string;
+  authorNote?: string | null;
+  viewCount: number;
+  status: string;
 }
 
-interface Novel {
+interface NovelInfo {
   id: number;
   title: string;
   authorId: number;
-  coverImage?: string;
-}
-
-interface Author {
-  id: number;
-  username: string;
+  coverImage?: string | null;
 }
 
 interface UpdateCardProps {
-  chapter: Chapter;
+  chapter: Chapter & {
+    novel: NovelInfo;
+    authorName: string;
+  };
 }
 
 export default function UpdateCard({ chapter }: UpdateCardProps) {
-  // Safe access to novelId with fallback
-  const novelId = chapter?.novelId || 0;
-  
-  // Get novel data
-  const { data: novel } = useQuery<Novel | undefined>({
-    queryKey: [novelId > 0 ? `/api/novels/${novelId}` : null],
-    enabled: novelId > 0,
-  });
-  
-  // Get author data
-  const { data: author } = useQuery<Author | undefined>({
-    queryKey: [(novel?.authorId || 0) > 0 ? `/api/users/${novel?.authorId}` : null],
-    enabled: !!(novel?.authorId && novel.authorId > 0),
-  });
-  
   // Format relative time with safe type handling
   const getRelativeTime = (dateStr: string | undefined) => {
     if (!dateStr) return "recently";
@@ -72,8 +57,11 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
     }
   };
   
-  // Return null if we don't have valid data
-  if (!novel || !chapter) {
+  // Access novel and author directly from chapter prop
+  const { novel, authorName } = chapter;
+
+  // Return null if we don't have valid novel data (chapter should always be valid if passed)
+  if (!novel) {
     return null;
   }
   
@@ -86,6 +74,9 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
             src={novel.coverImage} 
             alt={`${novel.title} cover`} 
             className="w-16 h-24 object-cover rounded-md shadow-sm"
+            loading="lazy"
+            width="64"
+            height="96"
           />
         ) : (
           <div className="w-16 h-24 bg-gray-200 flex items-center justify-center rounded-md shadow-sm">
@@ -109,7 +100,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
                 to={`/authors/${novel.authorId}`} 
                 className="hover:text-primary"
               >
-                {author?.username || "Author"}
+                {authorName || "Author"}
               </Link>
             </p>
           </div>

@@ -266,6 +266,9 @@ export default function BookmarksPage() {
                     src={bookmark.novel.coverImage}
                     alt={`${bookmark.novel.title} cover`}
                     className="w-20 h-28 object-cover rounded-md shadow-sm bg-gray-200 dark:bg-gray-900"
+                    loading="lazy"
+                    width="80"
+                    height="112"
                   />
                 ) : (
                   <div className="w-20 h-28 bg-gray-200 dark:bg-gray-900 flex items-center justify-center rounded-md shadow-sm">

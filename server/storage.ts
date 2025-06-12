@@ -204,14 +204,16 @@ export class DatabaseStorage implements IStorage {
           bookmarkCount: novels.bookmarkCount,
           createdAt: novels.createdAt,
           updatedAt: novels.updatedAt,
+          authorName: users.username,
           // Calculate average rating and count reviews
           averageRating: sql<number | null>`avg(${reviews.rating})`.as('averageRating'),
           reviewCount: sql<number>`count(${reviews.rating})`.as('reviewCount')
         })
         .from(novels)
         .leftJoin(reviews, eq(novels.id, reviews.novelId))
+        .leftJoin(users, eq(novels.authorId, users.id))
         .where(eq(novels.status, "published"))
-        .groupBy(novels.id);
+        .groupBy(novels.id, users.username);
 
       // Determine the column and order for sorting
       let orderByClause;
@@ -1052,13 +1054,36 @@ export class DatabaseStorage implements IStorage {
       
       // Get published chapters ordered by update date (newest first)
       const latestChapters = await db
-        .select()
+        .select({
+          // Select all chapter fields
+          id: chapters.id,
+          novelId: chapters.novelId,
+          title: chapters.title,
+          content: chapters.content,
+          chapterNumber: chapters.chapterNumber,
+          authorNote: chapters.authorNote,
+          viewCount: chapters.viewCount,
+          status: chapters.status,
+          createdAt: chapters.createdAt,
+          updatedAt: chapters.updatedAt,
+          // Select novel fields
+          novel: {
+            id: novels.id,
+            title: novels.title,
+            coverImage: novels.coverImage,
+            authorId: novels.authorId,
+          },
+          // Select author username
+          authorName: users.username,
+        })
         .from(chapters)
+        .leftJoin(novels, eq(chapters.novelId, novels.id))
+        .leftJoin(users, eq(novels.authorId, users.id))
         .where(eq(chapters.status, "published"))
         .orderBy(desc(chapters.updatedAt))
         .limit(limit);
       
-      console.log(`Found ${latestChapters.length} latest chapters`);
+      console.log(`Found ${latestChapters.length} latest chapters with novel and author info`);
       return latestChapters;
     } catch (error) {
       console.error("Error fetching latest chapters:", error);

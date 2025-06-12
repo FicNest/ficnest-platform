@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,8 @@ import { BookOpen, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Novel, Chapter, ReadingProgress } from "@shared/schema";
 import { AuthModal } from "@/components/auth-modal";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+
+const LazyAuthModal = React.lazy(() => import("@/components/auth-modal").then(module => ({ default: module.AuthModal })));
 
 // Define Author interface
 interface Author {
@@ -46,13 +48,13 @@ interface ChapterWithNovelInfo {
   status: string;
   createdAt: string;
   updatedAt: string;
-  novel?: {
+  novel: {
     id: number;
     title: string;
     authorId: number;
     coverImage?: string | null;
-    authorName?: string;
   };
+  authorName: string;
 }
 
 function ContinueReading({ readingProgress }: ContinueReadingProps) {
@@ -67,6 +69,9 @@ function ContinueReading({ readingProgress }: ContinueReadingProps) {
               src={readingProgress.novel.coverImage} 
               alt={`${readingProgress.novel.title} cover`} 
               className="w-24 h-36 object-cover rounded-md shadow"
+              loading="lazy"
+              width="96"
+              height="144"
             />
           ) : (
             <div className="w-24 h-36 bg-gray-200 flex items-center justify-center rounded-md shadow">
@@ -159,12 +164,14 @@ export default function HomePage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [emblaApi, setEmblaApi] = useState<any>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalDefaultTab, setAuthModalDefaultTab] = useState('login');
   
   // Fetch featured novels
   const { data: featuredNovels, isLoading: isLoadingFeatured, refetch: refetchFeaturedNovels } = useQuery<Novel[]>({
     queryKey: ['/api/novels/latest'],
     queryFn: async () => {
-      const res = await fetch('/api/novels/latest?limit=20');
+      const res = await fetch('/api/novels/latest?limit=10');
       if (!res.ok) {
         throw new Error(`Error fetching novels: ${res.statusText}`);
       }
@@ -200,6 +207,13 @@ export default function HomePage() {
     refetch: refetchUpdates 
   } = useQuery<ChapterWithNovelInfo[]>({
     queryKey: ['/api/chapters/latest'],
+    queryFn: async () => {
+      const res = await fetch('/api/chapters/latest?limit=5');
+      if (!res.ok) {
+        throw new Error(`Error fetching latest updates: ${res.statusText}`);
+      }
+      return await res.json();
+    },
     staleTime: 0, // Always fetch fresh data
   });
   
@@ -236,6 +250,15 @@ export default function HomePage() {
         {user && enhancedReadingProgress?.chapter && (
           <ContinueReading readingProgress={enhancedReadingProgress} />
         )}
+
+        {/* AuthModal (lazy loaded) */}
+        <Suspense fallback={null}>
+          <LazyAuthModal 
+            isOpen={showAuthModal}
+            onOpenChange={setShowAuthModal}
+            defaultTab={authModalDefaultTab}
+          />
+        </Suspense>
 
         {/* Featured Novels Section */}
         <div className="mb-12">
@@ -332,9 +355,6 @@ export default function HomePage() {
           onRefresh={handleRefreshUpdates}
         />
       </div>
-
-      {/* Auth Modal */}
-      
     </div>
   );
 }

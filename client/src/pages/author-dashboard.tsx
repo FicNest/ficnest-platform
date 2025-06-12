@@ -647,6 +647,9 @@ const NovelCard = ({ novel, onEdit, onAddChapter, initialShowDrafts = false }: {
             src={novel.coverImage} 
             alt={`${novel.title} cover`} 
             className="w-24 h-36 object-cover rounded-md shadow-sm"
+            loading="lazy"
+            width="96"
+            height="144"
           />
         ) : (
           <div className="w-24 h-36 bg-gray-200 flex items-center justify-center rounded-md shadow-sm">

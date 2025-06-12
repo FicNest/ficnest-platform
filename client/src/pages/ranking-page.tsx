@@ -154,6 +154,9 @@ export default function RankingPage() {
                                 src={novel.coverImage} 
                                 alt={`${novel.title} cover`}
                                 className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                                width="64"
+                                height="96"
                             />
                         ) : (
                             <Book className="text-gray-400" size={24} />
@@ -198,7 +201,6 @@ export default function RankingPage() {
                            </>
                         ) : (
                            <>
-                              {/* Display value and label for Views and Bookmarks */}
                               <span>{getMetricValue(novel)}</span>
                               <span className="text-sm font-medium text-gray-600">{metricLabel}</span>
                            </>
@@ -209,8 +211,8 @@ export default function RankingPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-medium text-gray-700">No novels found for this ranking.</h3>
+            <div className="text-center py-6 text-gray-500">
+              No novels found for this ranking criteria.
             </div>
           )}
         </CardContent>

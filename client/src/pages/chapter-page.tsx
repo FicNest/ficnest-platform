@@ -683,7 +683,7 @@ export default function ChapterPage() {
         <div className="flex justify-between items-center mt-8">
           {/* Previous Chapter Button */}
           <Link 
-            to={prevChapter ? `/novels/${novel.id}/chapters/${prevChapter.chapterNumber}` : ''}
+            to={prevChapter ? `/novels/${novelName}/chapters/${prevChapter.chapterNumber}` : ''}
             onClick={(e) => {!prevChapter && e.preventDefault();}}
           >
             <Button variant="outline" size="default" disabled={!prevChapter}>
@@ -695,7 +695,7 @@ export default function ChapterPage() {
           
           {/* Next Chapter Button */}
           <Link 
-            to={nextChapter ? `/novels/${novel.id}/chapters/${nextChapter.chapterNumber}` : ''}
+            to={nextChapter ? `/novels/${novelName}/chapters/${nextChapter.chapterNumber}` : ''}
             onClick={(e) => {!nextChapter && e.preventDefault();}}
           >
             <Button variant="outline" size="default" disabled={!nextChapter}>

@@ -462,6 +462,9 @@ export default function NovelDetailPage() {
                 src={novel.coverImage}
                 alt={`${novel.title} cover`} 
                 className="w-48 md:w-56 h-auto object-cover rounded-lg shadow-md"
+                loading="lazy"
+                width="224"
+                height="336"
               />
             ) : (
               <div className="w-48 md:w-56 h-auto aspect-[2/3] bg-gray-200 rounded-lg shadow-md flex items-center justify-center">
