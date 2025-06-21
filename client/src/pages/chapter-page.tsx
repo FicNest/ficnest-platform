@@ -585,7 +585,7 @@ export default function ChapterPage() {
           <div className="bg-white rounded-xl shadow-sm p-8 text-center">
             <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
             <p className="text-gray-600 mb-6">This chapter is not available.</p>
-            <Link to={novel ? `/novels/${novel.id}` : "/"}>
+            <Link to={novel ? `/novels/${encodeURIComponent(novel.title)}` : "/"}>
               <Button>Return to Novel Page</Button>
             </Link>
           </div>
@@ -601,12 +601,12 @@ export default function ChapterPage() {
         <div className="mb-4">
           <div>
             <h1 className="text-2xl font-bold mb-2">
-              <Link to={`/novels/${novel.id}`} className="hover:text-primary">
+              <Link to={`/novels/${encodeURIComponent(novel.title)}`} className="hover:text-primary">
                 {novel.title}
               </Link>
             </h1>
             <p className="text-gray-600">
-              by <Link to={`/authors/${novel.authorId}`} className="text-primary hover:underline">
+              by <Link to={`/authors/${encodeURIComponent(author?.username || '')}`} className="text-primary hover:underline">
                 {author?.username || "Author"}
               </Link>
             </p>

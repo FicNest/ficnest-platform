@@ -134,7 +134,7 @@ export default function NovelCard({ novel }: NovelCardProps) {
         
         <p className="text-xs text-gray-600 mb-2 line-clamp-1">
           by{" "}
-          <Link to={`/authors/${novel.authorId}`} className="hover:text-primary transition-colors">
+          <Link to={`/authors/${encodeURIComponent(authorDisplayName)}`} className="hover:text-primary transition-colors">
             {authorDisplayName}
           </Link>
         </p>

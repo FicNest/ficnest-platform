@@ -115,7 +115,7 @@ function Router() {
               {() => <RankingPage />}
             </Route>
 
-            <Route path="/authors/:id">
+            <Route path="/authors/:username">
               {() => <AuthorProfilePage />}
             </Route>
             

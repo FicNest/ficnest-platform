@@ -65,18 +65,11 @@ export default function CreateChapterPage() {
     defaultValues: {
       title: "",
       content: "",
-      chapterNumber: nextChapterNumber,
+      chapterNumber: 0, // Default to 0 for manual input
       authorNote: "",
       status: "draft",
     },
   });
-  
-  // Set chapter number when data is loaded
-  useEffect(() => {
-    if (nextChapterNumber) {
-      form.setValue("chapterNumber", nextChapterNumber);
-    }
-  }, [nextChapterNumber, form]);
   
   // Auto-save functionality
   useEffect(() => {
@@ -247,29 +240,22 @@ export default function CreateChapterPage() {
                 <FormItem>
                   <FormLabel>Chapter Number</FormLabel>
                   <FormControl>
-                    <Select
-                      value={field.value.toString()}
-                      onValueChange={(value: string) => {
-                        if (value === "custom") {
-                          const customNumber = prompt("Enter custom chapter number", field.value.toString());
-                          if (customNumber && !isNaN(Number(customNumber))) {
-                            field.onChange(Number(customNumber));
-                          }
+                    <Input
+                      type="number"
+                      placeholder="Enter chapter number"
+                      value={field.value === 0 ? "" : String(field.value)}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const filteredValue = inputValue.replace(/[^0-9]/g, '');
+                        
+                        if (filteredValue === '') {
+                          field.onChange(0);
                         } else {
-                          field.onChange(Number(value));
+                          field.onChange(Number(filteredValue));
                         }
                       }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={`Chapter ${field.value}`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={nextChapterNumber.toString()}>
-                          Chapter {nextChapterNumber}
-                        </SelectItem>
-                        <SelectItem value="custom">Custom...</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      className="mt-2" // Keep styling, adjust as needed
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

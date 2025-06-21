@@ -265,7 +265,7 @@ function CommentItem({
             {/* Link to novel and chapter - Only show in Author Dashboard */}
             {isAuthorDashboard && comment.novel?.id && comment.chapter?.chapterNumber && (
               <div className="text-sm text-gray-600">
-                on <Link to={`/novels/${comment.novel?.id}`} className="text-primary hover:underline">
+                on <Link to={`/novels/${encodeURIComponent(comment.novel?.title || '')}`} className="text-primary hover:underline">
                   {comment.novel?.title || "Unknown Novel"}
                 </Link>
                 <span className="mx-1">→</span>
@@ -299,7 +299,7 @@ function CommentItem({
             
             {/* View in Chapter Button (Optional Link) */}
             {comment.chapter?.novelId && comment.chapter?.chapterNumber && (
-              <Link to={`/novels/${comment.chapter.novelId}/chapters/${comment.chapter.chapterNumber}`}>
+              <Link to={`/novels/${encodeURIComponent(comment.novel?.title || '')}/chapters/${comment.chapter.chapterNumber}`}>
                 <Button variant="ghost" size="sm" className="flex items-center text-gray-500">
                   <ExternalLink className="mr-1 h-4 w-4" />
                   View in chapter
@@ -333,7 +333,7 @@ function CommentItem({
           </div>
           
           {/* Reply Form */}
-          {showReplyForm && (
+          {showReplyForm && chapterId && (
             <div className="mt-4 p-3 bg-gray-50 rounded-lg">
               <CommentReplyForm commentId={comment.id} cancelReply={() => setShowReplyForm(false)} chapterId={chapterId} />
             </div>
@@ -342,7 +342,9 @@ function CommentItem({
           {/* Nested Replies - recursively render each reply (if level is within maxLevel)*/}
           {shouldRenderReplies && showReplies && comment.replies && comment.replies.length > 0 && (
             <div className="mt-4 space-y-4">
-              {comment.replies.map((reply) => (
+              {comment.replies
+                .filter(reply => typeof reply.chapterId === 'number')
+                .map((reply) => (
                  // Pass the correct props, including novelAuthorId and chapterId
                 <CommentItem 
                   key={reply.id} 
@@ -699,16 +701,15 @@ export default function CommentSection({ novelId, chapterNumber, novelAuthorId, 
       ) : (
         <div className="text-center py-6 mb-8 border-b border-gray-100">
           <p className="text-gray-600">Please log in to leave a comment.</p>
-          <Link to="/login">
-            <Button variant="link">Log In</Button>
-          </Link>
         </div>
       )}
       
       {/* Comments List */}
       {processedAndNestedComments && processedAndNestedComments.length > 0 ? (
         <div className="space-y-6">
-          {processedAndNestedComments.map(comment => (
+          {processedAndNestedComments
+            .filter(comment => comment.chapterId !== undefined)
+            .map(comment => (
             // Render top-level comments using the recursive CommentItem
             <CommentItem 
               key={comment.id} // Use comment.id for key as it's unique for comments
@@ -717,7 +718,7 @@ export default function CommentSection({ novelId, chapterNumber, novelAuthorId, 
               onDelete={handleDeleteComment} // Pass the delete handler
               novelAuthorId={novelAuthorId}
               isAuthorDashboard={isAuthorDashboard} // Pass the new prop down
-              chapterId={comment.chapterId} 
+              chapterId={comment.chapterId as number} 
             />
           ))}
         </div>

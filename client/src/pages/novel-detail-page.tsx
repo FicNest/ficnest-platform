@@ -475,7 +475,7 @@ export default function NovelDetailPage() {
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2">{novel.title}</h1>
               <p className="text-gray-600 mb-4">
-                by <Link to={`/authors/${novel.authorId}`} className="text-primary hover:underline">
+                by <Link to={`/authors/${encodeURIComponent(author?.username || '')}`} className="text-primary hover:underline">
                   {author?.username || "Unknown Author"}
                 </Link>
               </p>

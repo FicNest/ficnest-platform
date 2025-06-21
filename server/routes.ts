@@ -721,60 +721,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // === Comment Routes ===
   
-  // Get comments for an author
-  app.get("/api/authors/:authorId/comments", isAuthenticated, async (req: Request, res: Response) => {
+  // Get comments by author username (authenticated users only)
+  app.get("/api/authors/:username/comments", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const authorId = Number(req.params.authorId);
-      
-      // Check if the authenticated user is the author
-      if (req.user?.id !== authorId) {
-        return res.status(403).json({ message: "You can only view comments for your own novels" });
+      const username = req.params.username;
+      const limit = Number(req.query.limit) || 20;
+
+      const authorUser = await storage.getUserByUsername(username);
+      if (!authorUser) {
+        return res.status(404).json({ message: "Author not found" });
       }
-      
-      // Get limit from query params or use default
-      const limit = Number(req.query.limit) || 50;
-      
-      // Get all comments for the author's novels
-      const comments = await storage.getCommentsByAuthor(authorId, limit);
-      
-      // Make sure each comment has proper user data
-      const enhancedComments = await Promise.all(
-        comments.map(async (comment: any) => {
-          // If the comment already has valid user info, use it
-          if (comment.user && comment.user.username) {
-            return comment;
-          }
-          
-          // Otherwise, try to fetch user info
-          try {
-            const user = await storage.getUser(comment.userId);
-            return {
-              ...comment,
-              user: user ? {
-                id: user.id,
-                username: user.username
-              } : {
-                id: comment.userId,
-                username: `User ${comment.userId}`
-              }
-            };
-          } catch (error) {
-            console.error(`Error fetching user data for comment ${comment.id}:`, error);
-            return {
-              ...comment,
-              user: {
-                id: comment.userId,
-                username: `User ${comment.userId}`
-              }
-            };
-          }
-        })
-      );
-      
-      res.json(enhancedComments);
+
+      // Ensure the logged-in user is the author or an admin (if applicable)
+      // For now, only allow fetching comments if the logged-in user is the author themselves
+      if (req.user?.id !== authorUser.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const comments = await storage.getCommentsByAuthor(authorUser.id, limit);
+      res.json(comments);
     } catch (error) {
-      console.error("Error fetching author comments:", error);
-      res.status(500).json({ message: "Error fetching comments" });
+      console.error("Error fetching comments by author username:", error);
+      res.status(500).json({ message: "Error fetching comments by author username" });
     }
   });
   
@@ -1130,6 +1098,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting review:", error);
       res.status(500).json({ message: "Error deleting review" });
+    }
+  });
+
+  // Get user information by username
+  app.get("/api/users/by-username/:username", async (req, res) => {
+    try {
+      const username = req.params.username;
+      
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return user without sensitive data
+      const { password, email, ...safeUserData } = user;
+      res.json(safeUserData);
+    } catch (error) {
+      console.error("Error fetching user by username:", error);
+      res.status(500).json({ message: "Error fetching user by username" });
     }
   });
 

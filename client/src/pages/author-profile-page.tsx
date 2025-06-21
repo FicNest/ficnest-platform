@@ -14,19 +14,18 @@ interface Author {
 }
 
 export default function AuthorProfilePage() {
-  const { id } = useParams<{ id: string }>();
-  const authorId = parseInt(id);
+  const { username } = useParams<{ username: string }>();
   
   // Fetch author data
   const { data: author, isLoading: isLoadingAuthor, error: authorError } = useQuery<Author>({
-    queryKey: [`/api/users/${authorId}`],
+    queryKey: [`/api/users/by-username/${username}`],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
   // Fetch author's novels
   const { data: novels, isLoading: isLoadingNovels, error: novelsError } = useQuery<Novel[]>({
-    queryKey: [`/api/novels/author/${authorId}`],
-    enabled: !!authorId,
+    queryKey: [`/api/novels/author/${author?.id}`],
+    enabled: !!author?.id,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
@@ -136,7 +135,7 @@ export default function AuthorProfilePage() {
         <h2 className="text-2xl font-bold mb-6">Novels by {author.username}</h2>
         
         {novels && novels.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {novels.map(novel => (
               <NovelCard 
                 key={novel.id} 

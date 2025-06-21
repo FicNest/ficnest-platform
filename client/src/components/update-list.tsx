@@ -12,6 +12,8 @@ interface Chapter {
   novelId: number;
   content: string;
   updatedAt: string;
+  viewCount: number;
+  status: string;
 }
 
 interface Novel {
@@ -23,7 +25,8 @@ interface Novel {
 }
 
 interface ChapterUpdate extends Chapter {
-  novel?: Novel;
+  novel: Novel;
+  authorName: string;
 }
 
 interface UpdateListProps {

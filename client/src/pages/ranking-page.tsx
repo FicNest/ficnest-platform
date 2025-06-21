@@ -147,7 +147,7 @@ export default function RankingPage() {
                   <div className="text-xl font-bold text-gray-800 mr-4">#{index + 1}</div>
                   
                   {/* Novel Cover Image */}
-                  <Link to={`/novels/${novel.id}`} className="flex-shrink-0 mr-4">
+                  <Link to={`/novels/${encodeURIComponent(novel.title)}`} className="flex-shrink-0 mr-4">
                     <div className="w-16 h-24 relative bg-gray-200 rounded-sm overflow-hidden flex items-center justify-center">
                         {novel.coverImage ? (
                             <img 
@@ -166,10 +166,17 @@ export default function RankingPage() {
 
                   {/* Novel Title and Author */}
                   <div className="flex-1 min-w-0">
-                     <Link href={`/novels/${novel.id}`} className="block">
+                     <Link to={`/novels/${encodeURIComponent(novel.title)}`} className="block">
                         <h3 className="font-semibold truncate text-base">{novel.title}</h3>
                      </Link>
-                     {novel.authorName && <p className="text-sm text-gray-600">by {novel.authorName}</p>}
+                     {novel.authorName && (
+                        <p className="text-sm text-gray-600">
+                           by{" "}
+                           <Link to={`/authors/${encodeURIComponent(novel.authorName)}`} className="hover:text-primary transition-colors">
+                              {novel.authorName}
+                           </Link>
+                        </p>
+                     )}
                   </div>
                   
                   {/* Metric Value Display */}

@@ -227,7 +227,7 @@ function AuthorReviewsSection() {
                       </div>
                       
                       <div className="text-sm text-gray-600">
-                        on <Link to={`/novels/${review.novel?.id}`} className="text-primary hover:underline">
+                        on <Link to={`/novels/${encodeURIComponent(review.novel?.title || '')}`} className="text-primary hover:underline">
                           {review.novel?.title || "Unknown Novel"}
                         </Link>
                       </div>
@@ -245,7 +245,7 @@ function AuthorReviewsSection() {
                     <p className="text-gray-700 my-3 whitespace-pre-line">{review.content}</p>
                     
                     <div className="flex justify-end">
-                      <Link to={`/novels/${review.novelId}`}>
+                      <Link to={`/novels/${encodeURIComponent(review.novel?.title || '')}`}>
                         <Button variant="ghost" size="sm" className="flex items-center text-gray-500">
                           <ExternalLink className="mr-1 h-4 w-4" />
                           View novel
@@ -488,7 +488,7 @@ function AuthorCommentsSection() {
               </div>
               
               <div className="text-sm text-gray-600">
-                on <Link to={`/novels/${comment.novel?.id}`} className="text-primary hover:underline">
+                on <Link to={`/novels/${encodeURIComponent(comment.novel?.title || '')}`} className="text-primary hover:underline">
                   {comment.novel?.title || "Unknown Novel"}
                 </Link>
                 <span className="mx-1">→</span>
@@ -661,7 +661,7 @@ const NovelCard = ({ novel, onEdit, onAddChapter, initialShowDrafts = false }: {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
             <div>
               <h3 className="font-semibold text-lg">
-                <Link to={`/novels/${novel.id}`} className="hover:text-primary transition">
+                <Link to={`/novels/${encodeURIComponent(novel.title)}`} className="hover:text-primary transition">
                   {novel.title}
                 </Link>
               </h3>

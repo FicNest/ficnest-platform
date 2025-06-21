@@ -134,7 +134,7 @@ export default function EditNovelPage() {
       });
       queryClient.invalidateQueries({ queryKey: [`/api/novels/${id}`] });
       queryClient.invalidateQueries({ queryKey: ["/api/novels/author"] });
-      navigate(`/novels/${id}`);
+      navigate(`/novels/${encodeURIComponent(form.getValues("title"))}`);
     },
     onError: (error: Error) => {
       toast({
@@ -145,14 +145,11 @@ export default function EditNovelPage() {
     },
   });
 
-  const onSubmit = (data: NovelFormValues, status: string = "draft") => {
-    // Override status if a different save button was clicked
-    const submissionData = {
-      ...data,
-      status: status as "draft" | "published",
-    };
-    
-    updateNovelMutation.mutate(submissionData);
+  const onSubmit = (data: NovelFormValues) => {
+    if (id) {
+      // Update existing novel
+      updateNovelMutation.mutate(data);
+    }
   };
 
   // Delete chapter mutation
@@ -391,13 +388,12 @@ export default function EditNovelPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate(`/novels/${id}`)}
+              onClick={() => novel && navigate(`/novels/${encodeURIComponent(novel.title)}`)}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              onClick={() => onSubmit(form.getValues(), "draft")}
               disabled={updateNovelMutation.isPending}
             >
               {updateNovelMutation.isPending ? (
@@ -411,7 +407,6 @@ export default function EditNovelPage() {
             </Button>
             <Button
               type="submit"
-              onClick={() => onSubmit(form.getValues(), "published")}
               disabled={updateNovelMutation.isPending}
             >
               {updateNovelMutation.isPending ? (
@@ -432,7 +427,7 @@ export default function EditNovelPage() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Chapters</h2>
           <Button
-            onClick={() => navigate(`/novels/${id}/chapters/new`)}
+            onClick={() => navigate(`/author/novels/${id}/chapters/create`)}
             className="flex items-center gap-2"
           >
             <Book className="h-4 w-4" />
@@ -455,19 +450,19 @@ export default function EditNovelPage() {
             {publishedChapters.map((chapter) => (
               <div
                 key={chapter.id}
-                className="flex items-center justify-between p-4 bg-card rounded-lg border"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-card rounded-lg border"
               >
-                <div>
+                <div className="w-full sm:w-auto mb-2 sm:mb-0">
                   <h3 className="font-semibold">Chapter {chapter.chapterNumber}: {chapter.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {new Date(chapter.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/novels/${id}/chapters/${chapter.id}/edit`)}
+                    onClick={() => navigate(`/author/novels/${id}/chapters/${chapter.id}/edit`)}
                   >
                     Edit
                   </Button>
