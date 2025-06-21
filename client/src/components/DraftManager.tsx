@@ -92,20 +92,20 @@ export default function DraftManager({ novelId }: DraftManagerProps) {
       <CardHeader>
         <CardTitle>Drafts</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="w-full overflow-x-auto">
         {isLoading ? (
           <div className="space-y-3">
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-full" />
           </div>
         ) : drafts && drafts.length > 0 ? (
-          <div className="space-y-3">
+          <div className="flex flex-col space-y-3">
             {drafts.map((draft) => (
-              <div 
-                key={draft.id} 
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
+              <div
+                key={draft.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 rounded-md p-3 w-full"
               >
-                <div>
+                <div className="flex-1 mb-2 sm:mb-0">
                   <div className="font-medium">
                     {draft.title || "Untitled Draft"}
                   </div>
@@ -113,9 +113,9 @@ export default function DraftManager({ novelId }: DraftManagerProps) {
                     Last updated: {new Date(draft.updatedAt).toLocaleString()}
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Link to={`/author/novels/${novelId}/chapters/edit/${draft.chapterNumber}`}>
-                    <Button size="sm" variant="outline">
+                <div className="flex flex-row gap-2 flex-none w-full sm:w-auto justify-center sm:justify-end mt-2 sm:mt-0">
+                  <Link to={`/author/novels/${novelId}/chapters/edit/${draft.chapterNumber}`} className="w-full sm:w-auto">
+                    <Button size="sm" variant="outline" className="w-full sm:w-auto">
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
@@ -123,16 +123,17 @@ export default function DraftManager({ novelId }: DraftManagerProps) {
                   <Button
                     size="sm"
                     variant="outline"
+                    className="w-full sm:w-auto"
                     onClick={() => handlePublishDraft(draft.id)}
                     disabled={publishDraftMutation.isPending}
                   >
                     <Book className="h-4 w-4 mr-1" />
                     Publish
                   </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="text-red-500"
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-red-500 w-full sm:w-auto"
                     onClick={() => handleDeleteDraft(draft.id)}
                     disabled={deleteDraftMutation.isPending}
                   >
