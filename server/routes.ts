@@ -1343,6 +1343,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Publish a draft chapter (author only)
+  app.put("/api/chapters/:chapterId/publish", isAuthor, async (req, res) => {
+    try {
+      const chapterId = Number(req.params.chapterId);
+      if (isNaN(chapterId)) {
+        return res.status(400).json({ message: "Invalid chapter ID" });
+      }
+      // Fetch the chapter
+      const chapter = await storage.getChapterById(chapterId);
+      if (!chapter) {
+        return res.status(404).json({ message: "Chapter not found" });
+      }
+      // Fetch the novel to check the author
+      const novel = await storage.getNovel(chapter.novelId);
+      if (!novel) {
+        return res.status(404).json({ message: "Novel not found" });
+      }
+      if (novel.authorId !== req.user?.id) {
+        return res.status(403).json({ message: "You can only publish your own chapters" });
+      }
+      // Update the chapter status to 'published'
+      const updatedChapter = await storage.updateChapter(chapter.novelId, chapter.chapterNumber, { status: "published" });
+      if (!updatedChapter) {
+        return res.status(500).json({ message: "Error publishing chapter" });
+      }
+      res.json(updatedChapter);
+    } catch (error) {
+      console.error("Error publishing chapter:", error);
+      res.status(500).json({ message: "Error publishing chapter" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
