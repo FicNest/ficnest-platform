@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Chapter, Novel, User } from "@shared/schema";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ConditionalChapterTopAd, ConditionalChapterBottomAd, ConditionalInContentAd } from "@/components/conditional-ad";
 
 // Define the URL route pattern to match both novelName and chapterNumber
 const chapterRoute = "/novels/:novelName/chapters/:chapterNumber";
@@ -597,6 +598,9 @@ export default function ChapterPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
+        {/* Chapter Top Ad */}
+        <ConditionalChapterTopAd />
+
         {/* Novel Title and Author */}
         <div className="mb-4">
           <div>
@@ -678,6 +682,9 @@ export default function ChapterPage() {
             </div>
           )}
         </div>
+
+        {/* In-Content Ad after chapter content */}
+        <ConditionalInContentAd />
         
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center mt-8">
@@ -704,6 +711,9 @@ export default function ChapterPage() {
             </Button>
           </Link>
         </div>
+
+        {/* Chapter Bottom Ad */}
+        <ConditionalChapterBottomAd />
         
         {/* Comments Section */}
         <CommentSection novelId={novel.id} chapterNumber={chapterNumber} novelAuthorId={novel.authorId} isAuthorDashboard={false} chapterId={chapter.id} />

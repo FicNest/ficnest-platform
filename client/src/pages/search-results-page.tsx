@@ -6,6 +6,7 @@ import { Novel } from "@shared/schema";
 import { Search, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { ConditionalSearchResultsAd, ConditionalInContentAd } from "@/components/conditional-ad";
 
 interface User {
   id: number;
@@ -170,6 +171,9 @@ export default function SearchResultsPage() {
           Found {totalResults} {totalResults === 1 ? "result" : "results"} for "{searchQuery}"
         </p>
       )}
+
+      {/* Search Results Ad */}
+      <ConditionalSearchResultsAd />
       
       {/* Loading State */}
       {isLoading && (
@@ -212,14 +216,19 @@ export default function SearchResultsPage() {
       {!isLoading && (
         <>
           {paginatedNovels.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6">
-              {paginatedNovels.map(novel => (
-                <NovelCard 
-                  key={novel.id} 
-                  novel={novel} 
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6">
+                {paginatedNovels.map(novel => (
+                  <NovelCard 
+                    key={novel.id} 
+                    novel={novel} 
+                  />
+                ))}
+              </div>
+
+              {/* In-Content Ad after search results */}
+              <ConditionalInContentAd />
+            </>
           ) : (
             !isLoading && searchQuery && (
               <div className="bg-white rounded-xl shadow-sm p-8 text-center">

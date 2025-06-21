@@ -18,6 +18,7 @@ import { BookOpen, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Novel, Chapter, ReadingProgress } from "@shared/schema";
 import { AuthModal } from "@/components/auth-modal";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { ConditionalHeaderAd, ConditionalInContentAd, ConditionalFooterAd } from "@/components/conditional-ad";
 
 const LazyAuthModal = React.lazy(() => import("@/components/auth-modal").then(module => ({ default: module.AuthModal })));
 
@@ -241,6 +242,9 @@ export default function HomePage() {
   return (
     <div className="py-8">
       <div className="container mx-auto px-4">
+        {/* Header Ad */}
+        <ConditionalHeaderAd />
+
         {/* AnimatedLogo on white background */}
         <div className="mb-10 bg-white rounded-xl p-8">
           <AnimatedLogo />
@@ -304,6 +308,9 @@ export default function HomePage() {
           )}
         </div>
 
+        {/* In-Content Ad after Featured Novels */}
+        <ConditionalInContentAd />
+
         {/* Top Novels Section */}
         <div className="mb-12">
           {/* Header with Title and Navigation */}
@@ -354,6 +361,9 @@ export default function HomePage() {
           isLoading={isLoadingUpdates}
           onRefresh={handleRefreshUpdates}
         />
+
+        {/* Footer Ad */}
+        <ConditionalFooterAd />
       </div>
     </div>
   );
