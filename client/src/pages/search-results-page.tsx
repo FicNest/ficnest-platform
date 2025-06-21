@@ -6,7 +6,6 @@ import { Novel } from "@shared/schema";
 import { Search, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { ConditionalSearchResultsAd, ConditionalInContentAd } from "@/components/conditional-ad";
 
 interface User {
   id: number;
@@ -172,9 +171,6 @@ export default function SearchResultsPage() {
         </p>
       )}
 
-      {/* Search Results Ad */}
-      <ConditionalSearchResultsAd />
-      
       {/* Loading State */}
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -225,9 +221,6 @@ export default function SearchResultsPage() {
                   />
                 ))}
               </div>
-
-              {/* In-Content Ad after search results */}
-              <ConditionalInContentAd />
             </>
           ) : (
             !isLoading && searchQuery && (
