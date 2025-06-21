@@ -7,7 +7,7 @@ yarn-error.log*
 # Production build
 dist/
 build/
-public/
+# public/  <-- Commented out to allow client/public to be tracked
 
 # Environment variables
 .env
@@ -102,3 +102,10 @@ attached_assets/
 
 # Test files
 test-supabase.js
+
+# If you want to ignore only the root public folder, use:
+/public/
+
+# Allow client/public and its sitemap.xml
+!client/public/
+!client/public/sitemap.xml

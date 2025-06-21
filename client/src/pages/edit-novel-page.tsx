@@ -256,228 +256,230 @@ export default function EditNovelPage() {
   }
 
   return (
-    <div className="container py-8">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter novel title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6 md:p-8">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter novel title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="genres"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Genres</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter genres (comma-separated)" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Separate multiple genres with commas
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="genres"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Genres</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter genres (comma-separated)" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Separate multiple genres with commas
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="draft" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Draft
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="published" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Published
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="draft" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Draft
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="published" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Published
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="coverImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cover Image</FormLabel>
-                    <FormControl>
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4">
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleCoverUpload}
-                            className="max-w-xs"
-                          />
-                        </div>
-                        {coverPreview && (
-                          <div className="mt-4">
-                            <img
-                              src={coverPreview}
-                              alt="Cover preview"
-                              className="w-32 h-48 object-cover rounded-lg shadow-md"
+                <FormField
+                  control={form.control}
+                  name="coverImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cover Image</FormLabel>
+                      <FormControl>
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-4">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleCoverUpload}
+                              className="max-w-xs"
                             />
                           </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      Upload a cover image for your novel (max 2MB). Image will be automatically cropped to fit the homepage.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter novel description"
-                        className="min-h-[200px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => novel && navigate(`/novels/${encodeURIComponent(novel.title)}`)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={updateNovelMutation.isPending}
-            >
-              {updateNovelMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save as Draft"
-              )}
-            </Button>
-            <Button
-              type="submit"
-              disabled={updateNovelMutation.isPending}
-            >
-              {updateNovelMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Publishing...
-                </>
-              ) : (
-                "Publish"
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
-
-      {/* Chapters Section */}
-      <div className="mt-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Chapters</h2>
-          <Button
-            onClick={() => navigate(`/author/novels/${id}/chapters/create`)}
-            className="flex items-center gap-2"
-          >
-            <Book className="h-4 w-4" />
-            Add Chapter
-          </Button>
-        </div>
-
-        {isLoadingChapters ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </div>
-        ) : publishedChapters.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">
-            No chapters published yet. Add your first chapter!
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {publishedChapters.map((chapter) => (
-              <div
-                key={chapter.id}
-                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-card rounded-lg border"
-              >
-                <div className="w-full sm:w-auto mb-2 sm:mb-0">
-                  <h3 className="font-semibold">Chapter {chapter.chapterNumber}: {chapter.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(chapter.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/author/novels/${id}/chapters/${chapter.id}/edit`)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeleteChapter(chapter.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                          {coverPreview && (
+                            <div className="mt-4">
+                              <img
+                                src={coverPreview}
+                                alt="Cover preview"
+                                className="w-32 h-48 object-cover rounded-lg shadow-md"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        Upload a cover image for your novel (max 2MB). Image will be automatically cropped to fit the homepage.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            ))}
+
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter novel description"
+                          className="h-[420px] min-h-[200px] resize-vertical"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => novel && navigate(`/novels/${encodeURIComponent(novel.title)}`)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateNovelMutation.isPending}
+              >
+                {updateNovelMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save as Draft"
+                )}
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateNovelMutation.isPending}
+              >
+                {updateNovelMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  "Publish"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
+
+        {/* Chapters Section */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Chapters</h2>
+            <Button
+              onClick={() => navigate(`/author/novels/${id}/chapters/create`)}
+              className="flex items-center gap-2"
+            >
+              <Book className="h-4 w-4" />
+              Add Chapter
+            </Button>
           </div>
-        )}
+
+          {isLoadingChapters ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          ) : publishedChapters.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">
+              No chapters published yet. Add your first chapter!
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {publishedChapters.map((chapter) => (
+                <div
+                  key={chapter.id}
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-card rounded-lg border"
+                >
+                  <div className="w-full sm:w-auto mb-2 sm:mb-0">
+                    <h3 className="font-semibold">Chapter {chapter.chapterNumber}: {chapter.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(chapter.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/author/novels/${id}/chapters/${chapter.id}/edit`)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteChapter(chapter.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

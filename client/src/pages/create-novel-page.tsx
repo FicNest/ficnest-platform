@@ -88,7 +88,7 @@ export default function CreateNovelPage() {
         description: "Your novel has been created successfully.",
       });
       queryClient.invalidateQueries({ queryKey: [`/api/novels/author/${user?.id}`] });
-      navigate(`/novels/${novel.id}`);
+      navigate(`/novels/${encodeURIComponent(novel.title)}`);
     },
     onError: (error: Error) => {
       toast({
