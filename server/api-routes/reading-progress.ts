@@ -30,6 +30,22 @@ export async function getRecentReadingProgress(req: Request, res: Response) {
         // Get chapter data
         const chapter = await storage.getChapterById(progress.chapterId);
         
+        // Get all chapters for this novel (to count published ones)
+        const allChapters = await storage.getChaptersByNovel(progress.novelId);
+        const publishedChapters = allChapters.filter(c => c.status === "published");
+        // Sort by chapterNumber ascending
+        publishedChapters.sort((a, b) => a.chapterNumber - b.chapterNumber);
+        
+        // Find the index of the current chapter among published chapters
+        let progressPercent = 0;
+        if (chapter && publishedChapters.length > 0) {
+          const idx = publishedChapters.findIndex(c => c.id === chapter.id);
+          if (idx !== -1) {
+            // Progress is (index + 1) / total published chapters * 100
+            progressPercent = Math.round(((idx + 1) / publishedChapters.length) * 100);
+          }
+        }
+        
         // Get author name if we have novel
         let authorName = "Unknown Author";
         if (novel?.authorId) {
@@ -41,6 +57,7 @@ export async function getRecentReadingProgress(req: Request, res: Response) {
         
         enhancedReadingProgress.push({
           ...progress,
+          progress: progressPercent, // override with correct percentage
           novel: novel ? {
             ...novel,
             authorName
