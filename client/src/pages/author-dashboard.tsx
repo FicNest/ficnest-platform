@@ -821,9 +821,9 @@ export default function AuthorDashboard() {
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-8 h-[80vh] md:h-[80vh]">
         {/* Sidebar Navigation */}
-        <div className="md:w-64 bg-white rounded-xl shadow-sm p-6">
+        <div className="md:w-64 bg-white rounded-xl shadow-sm p-6 md:sticky md:top-8 md:self-start md:h-[calc(80vh-2rem)] md:overflow-y-auto">
           <h2 className="text-xl font-bold mb-6">Author Dashboard</h2>
           
           <nav className="space-y-1">
@@ -853,7 +853,7 @@ export default function AuthorDashboard() {
         </div>
         
         {/* Main Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto md:h-[80vh] pr-2">
           {renderContent()}
         </div>
       </div>
