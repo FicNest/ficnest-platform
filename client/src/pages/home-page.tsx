@@ -59,53 +59,54 @@ interface ChapterWithNovelInfo {
 
 function ContinueReading({ readingProgress }: ContinueReadingProps) {
   return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">Continue Reading</h2>
-      <div className="bg-white p-6 rounded-xl shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          {/* Book cover */}
-          {readingProgress.novel.coverImage ? (
-            <img 
-              src={readingProgress.novel.coverImage} 
-              alt={`${readingProgress.novel.title} cover`} 
-              className="w-24 h-36 object-cover rounded-md shadow"
-              loading="lazy"
-              width="96"
-              height="144"
-            />
-          ) : (
-            <div className="w-24 h-36 bg-gray-200 flex items-center justify-center rounded-md shadow">
-              <BookOpen className="text-gray-400" size={32} />
-            </div>
-          )}
-          
-          <div className="flex-1">
-            <h3 className="text-xl font-bold">{readingProgress.novel.title}</h3>
-            <p className="text-gray-600 mb-1">
-              by <Link to={`/authors/${readingProgress.novel.authorId}`} className="text-primary hover:underline">
-                {readingProgress.novel.authorName || "Unknown Author"}
-              </Link>
-            </p>
-            <div className="flex items-center mb-3">
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
-                <div 
-                  className="bg-primary h-2.5 rounded-full" 
-                  style={{ width: `${readingProgress.progress}%` }}
-                />
-              </div>
-              <span className="ml-2 text-sm text-gray-600">{readingProgress.progress}%</span>
-            </div>
-            <p className="text-sm text-gray-500">
-              Last read Chapter {readingProgress.chapter.chapterNumber}: "{readingProgress.chapter.title}"
-            </p>
+    <div className="mb-6">
+      <h2 className="text-2xl font-bold mb-4 text-gray-900">Continue Reading</h2>
+      <div className="bg-white rounded-lg shadow-sm px-3 py-2 flex items-center gap-3 w-full max-w-lg mx-auto">
+        {/* Cover image */}
+        {readingProgress.novel.coverImage ? (
+          <img
+            src={readingProgress.novel.coverImage}
+            alt={`${readingProgress.novel.title} cover`}
+            className="w-12 h-16 object-cover rounded-md flex-shrink-0"
+            loading="lazy"
+            width="48"
+            height="64"
+          />
+        ) : (
+          <div className="w-12 h-16 bg-gray-200 flex items-center justify-center rounded-md flex-shrink-0">
+            <BookOpen className="text-gray-400" size={20} />
           </div>
-          
-          <Link to={`/novels/${readingProgress.novel.title}/chapters/${readingProgress.chapter.chapterNumber}`}>
-            <Button>
-              Continue Reading
-            </Button>
-          </Link>
+        )}
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-base truncate">{readingProgress.novel.title}</h3>
+          </div>
+          <p className="text-xs text-gray-500 truncate">
+            by <Link to={`/authors/${readingProgress.novel.authorId}`} className="text-primary hover:underline">
+              {readingProgress.novel.authorName || "Unknown Author"}
+            </Link>
+          </p>
+          <p className="text-xs text-blue-600 truncate">
+            Chapter {readingProgress.chapter.chapterNumber}: "{readingProgress.chapter.title}"
+          </p>
+          {/* Progress bar and percentage side by side */}
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1 bg-gray-200 rounded-full h-1">
+              <div
+                className="bg-primary h-1 rounded-full"
+                style={{ width: `${readingProgress.progress}%` }}
+              />
+            </div>
+            <span className="text-xs text-gray-400 min-w-[2.5rem] text-right">{readingProgress.progress}%</span>
+          </div>
         </div>
+        {/* Button */}
+        <Link to={`/novels/${readingProgress.novel.title}/chapters/${readingProgress.chapter.chapterNumber}`}> 
+          <Button size="sm" className="ml-2 whitespace-nowrap">
+            Continue
+          </Button>
+        </Link>
       </div>
     </div>
   );
