@@ -36,7 +36,7 @@ type ChapterFormValues = z.infer<typeof chapterSchema>;
 
 export default function EditChapterPage() {
   const [match, params] = useRoute("/author/novels/:novelId/chapters/edit/:chapterId");
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const { toast } = useToast();
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
@@ -100,6 +100,14 @@ export default function EditChapterPage() {
     return () => clearInterval(intervalId);
   }, [form, novelId]);
   
+  // Helper to get query params
+  function getQueryParam(param: string) {
+    const search = location.split('?')[1] || '';
+    const params = new URLSearchParams(search);
+    return params.get(param);
+  }
+  const returnTo = getQueryParam('returnTo');
+  
   // Update chapter mutation
   const updateChapterMutation = useMutation({
     mutationFn: async (data: ChapterFormValues & { status: string }) => {
@@ -116,10 +124,10 @@ export default function EditChapterPage() {
       localStorage.removeItem(`chapter-edit-${novelId}-${chapter.chapterNumber}`);
       
       toast({
-        title: chapter.status === "published" ? "Chapter published" : "Draft saved",
+        title: chapter.status === "published" ? "Chapter published" : "Changes saved",
         description: chapter.status === "published" 
           ? "Your chapter has been published successfully." 
-          : "Your chapter has been saved as a draft.",
+          : "Your changes have been saved successfully.",
       });
       
       // Invalidate relevant queries
@@ -127,8 +135,10 @@ export default function EditChapterPage() {
       queryClient.invalidateQueries({ queryKey: [`/api/novels/${novelId}/chapters`] });
       queryClient.invalidateQueries({ queryKey: [`novel-${novelId}-drafts`] });
       
-      if (chapter.status === "published") {
-        navigate(`/author/dashboard`);
+      if (returnTo) {
+        navigate(returnTo);
+      } else if (novel && novel.title) {
+        navigate(`/novels/${encodeURIComponent(novel.title)}`);
       } else {
         navigate(`/author/dashboard`);
       }

@@ -59,6 +59,7 @@ export default function EditNovelPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [submitType, setSubmitType] = useState<'draft' | 'publish'>("draft");
 
   // Fetch the novel data
   const { data: novel, isLoading, error } = useQuery<Novel, Error>({
@@ -128,10 +129,17 @@ export default function EditNovelPage() {
       return await res.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Novel updated",
-        description: "Your novel has been updated successfully.",
-      });
+      if (submitType === "draft") {
+        toast({
+          title: "Changes saved",
+          description: "Your changes have been saved successfully.",
+        });
+      } else {
+        toast({
+          title: "Novel updated",
+          description: "Your novel has been updated successfully.",
+        });
+      }
       queryClient.invalidateQueries({ queryKey: [`/api/novels/${id}`] });
       queryClient.invalidateQueries({ queryKey: ["/api/novels/author"] });
       navigate(`/novels/${encodeURIComponent(form.getValues("title"))}`);
@@ -147,7 +155,6 @@ export default function EditNovelPage() {
 
   const onSubmit = (data: NovelFormValues) => {
     if (id) {
-      // Update existing novel
       updateNovelMutation.mutate(data);
     }
   };
@@ -396,8 +403,9 @@ export default function EditNovelPage() {
               <Button
                 type="submit"
                 disabled={updateNovelMutation.isPending}
+                onClick={() => setSubmitType('draft')}
               >
-                {updateNovelMutation.isPending ? (
+                {updateNovelMutation.isPending && submitType === 'draft' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Saving...
@@ -409,8 +417,9 @@ export default function EditNovelPage() {
               <Button
                 type="submit"
                 disabled={updateNovelMutation.isPending}
+                onClick={() => setSubmitType('publish')}
               >
-                {updateNovelMutation.isPending ? (
+                {updateNovelMutation.isPending && submitType === 'publish' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Publishing...

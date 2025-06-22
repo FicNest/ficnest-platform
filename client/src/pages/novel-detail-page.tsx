@@ -166,7 +166,7 @@ function ChapterItem({
         
         {isAuthor && (
           <>
-            <Link to={`/author/novels/${chapter.novelId}/chapters/edit/${chapter.chapterNumber}`}>
+            <Link to={`/author/novels/${chapter.novelId}/chapters/edit/${chapter.chapterNumber}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
               <Button size="sm" variant="outline">
                 <Edit className="h-4 w-4 mr-1" />
                 Edit
