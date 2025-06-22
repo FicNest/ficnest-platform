@@ -252,29 +252,13 @@ export default function EditChapterPage() {
                 <FormItem>
                   <FormLabel>Chapter Number</FormLabel>
                   <FormControl>
-                    <Select
-                      value={field.value.toString()}
-                      onValueChange={(value: string) => {
-                        if (value === "custom") {
-                          const customNumber = prompt("Enter custom chapter number", field.value.toString());
-                          if (customNumber && !isNaN(Number(customNumber))) {
-                            field.onChange(Number(customNumber));
-                          }
-                        } else {
-                          field.onChange(Number(value));
-                        }
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={`Chapter ${field.value}`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={field.value.toString()}>
-                          Chapter {field.value}
-                        </SelectItem>
-                        <SelectItem value="custom">Custom...</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      type="number"
+                      min={1}
+                      placeholder="Enter chapter number"
+                      {...field}
+                      onChange={e => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -393,21 +377,30 @@ export default function EditChapterPage() {
             
             {/* Form Buttons */}
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onSubmit(form.getValues(), "draft")}
-                disabled={updateChapterMutation.isPending}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                Save as Draft
-              </Button>
-              <Button
-                type="submit"
-                disabled={updateChapterMutation.isPending}
-              >
-                {updateChapterMutation.isPending ? "Publishing..." : "Publish Chapter"}
-              </Button>
+              {status === "published" ? (
+                <Button
+                  type="submit"
+                  disabled={updateChapterMutation.isPending}
+                >
+                  {updateChapterMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              ) : status === "draft" ? (
+                <>
+                  <Button
+                    type="submit"
+                    disabled={updateChapterMutation.isPending}
+                  >
+                    {updateChapterMutation.isPending ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => onSubmit(form.getValues(), "published")}
+                    disabled={updateChapterMutation.isPending}
+                  >
+                    Publish Chapter
+                  </Button>
+                </>
+              ) : null}
             </div>
           </form>
         </Form>

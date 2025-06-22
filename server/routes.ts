@@ -521,6 +521,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update chapter (author only)
+  app.put("/api/novels/:novelId/chapters/:chapterNumber", isAuthor, async (req: Request, res: Response) => {
+    try {
+      const novelId = Number(req.params.novelId);
+      const chapterNumber = Number(req.params.chapterNumber);
+
+      if (isNaN(novelId) || isNaN(chapterNumber)) {
+        return res.status(400).json({ message: "Invalid novel ID or chapter number" });
+      }
+
+      // Fetch the chapter
+      const chapter = await storage.getChapter(novelId, chapterNumber);
+      if (!chapter) {
+        return res.status(404).json({ message: "Chapter not found" });
+      }
+
+      // Fetch the novel to check the author
+      const novel = await storage.getNovel(novelId);
+      if (!novel) {
+        return res.status(404).json({ message: "Novel not found" });
+      }
+      if (novel.authorId !== req.user?.id) {
+        return res.status(403).json({ message: "You can only update your own chapters" });
+      }
+
+      // Accept req.body as the update (add validation if needed)
+      const updatedChapter = await storage.updateChapter(
+        novelId,
+        chapterNumber,
+        req.body
+      );
+      if (!updatedChapter) {
+        return res.status(500).json({ message: "Error updating chapter" });
+      }
+      res.json(updatedChapter);
+    } catch (error) {
+      console.error("Error updating chapter:", error);
+      res.status(500).json({ message: "Error updating chapter" });
+    }
+  });
+
   // === Bookmark Routes ===
   
   // Get user's bookmarks
