@@ -1080,7 +1080,7 @@ export class DatabaseStorage implements IStorage {
             authorId: novels.authorId,
           },
           // Select author username
-          authorName: users.username,
+          username: users.username,
         })
         .from(chapters)
         .leftJoin(novels, eq(chapters.novelId, novels.id))

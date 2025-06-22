@@ -54,7 +54,7 @@ interface ChapterWithNovelInfo {
     authorId: number;
     coverImage?: string | null;
   };
-  authorName: string;
+  username: string;
 }
 
 function ContinueReading({ readingProgress }: ContinueReadingProps) {

@@ -148,7 +148,7 @@ function ChapterItem({
   };
 
   return (
-    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition gap-3 md:gap-0">
       <div>
         <Link to={`/novels/${encodeURIComponent(novelTitle)}/chapters/${chapter.chapterNumber}`} className="font-medium hover:text-primary transition">
           <span>Chapter {chapter.chapterNumber}:</span> <span>{chapter.title}</span>
@@ -158,7 +158,7 @@ function ChapterItem({
           <span>{Math.ceil(chapter.content.length / 1000)} min read</span>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 md:justify-end">
         <div className="flex items-center text-gray-500 text-sm">
           <Eye className="mr-1 h-4 w-4" />
           <span>{chapter.viewCount || 0}</span>
@@ -546,7 +546,7 @@ export default function NovelDetailPage() {
               No chapters available yet.
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[600px] md:max-h-[900px] overflow-y-auto pr-1">
               {currentChapters.map((chapter) => (
                 <ChapterItem
                   key={chapter.id}

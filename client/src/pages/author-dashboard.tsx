@@ -716,7 +716,7 @@ const NovelCard = ({ novel, onEdit, onAddChapter, initialShowDrafts = false }: {
       
       {/* Drafts Panel - Shown when showDrafts is true */}
       {showDrafts && (
-        <div className="ml-6 mr-2">
+        <div className="ml-6 mr-2 max-h-[600px] md:max-h-[900px] overflow-y-auto">
           <DraftManager novelId={novel.id} />
         </div>
       )}

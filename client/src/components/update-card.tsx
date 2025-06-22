@@ -24,7 +24,7 @@ interface NovelInfo {
 interface UpdateCardProps {
   chapter: Chapter & {
     novel: NovelInfo;
-    authorName: string;
+    username: string;
   };
 }
 
@@ -58,7 +58,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
   };
   
   // Access novel and author directly from chapter prop
-  const { novel, authorName } = chapter;
+  const { novel, username } = chapter;
 
   // Return null if we don't have valid novel data (chapter should always be valid if passed)
   if (!novel) {
@@ -100,7 +100,7 @@ export default function UpdateCard({ chapter }: UpdateCardProps) {
                 to={`/authors/${novel.authorId}`} 
                 className="hover:text-primary"
               >
-                {authorName || "Author"}
+                {username || "Author"}
               </Link>
             </p>
           </div>

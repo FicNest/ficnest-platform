@@ -28,16 +28,16 @@ export async function getLatestChapters(req: Request, res: Response) {
           continue;
         }
         
-        // Get author name if we have novel
-        let authorName = "Unknown Author";
+        // Get author username if we have novel
+        let username = "Unknown Author";
         if (novel?.authorId) {
           const author = await storage.getUser(novel.authorId);
           if (author) {
-            authorName = author.username;
+            username = author.username;
           }
         }
         
-        // Add novel with author name to the chapter
+        // Add novel with username to the chapter
         enhancedChapters.push({
           id: chapter.id,
           novelId: chapter.novelId,
@@ -53,9 +53,9 @@ export async function getLatestChapters(req: Request, res: Response) {
             id: novel.id,
             title: novel.title,
             authorId: novel.authorId,
-            coverImage: novel.coverImage,
-            authorName: authorName
-          }
+            coverImage: novel.coverImage
+          },
+          username: username
         });
       } catch (error) {
         console.error(`Error enhancing chapter ${chapter.id}:`, error);
