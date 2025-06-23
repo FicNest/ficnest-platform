@@ -154,6 +154,15 @@ export default function EditChapterPage() {
   
   // Handle form submission
   const onSubmit = (data: ChapterFormValues, submitStatus: string = "draft") => {
+    // Always use the chapterNumber from the form (should be set for all chapters)
+    if (!data.chapterNumber || data.chapterNumber <= 0) {
+      toast({
+        title: "Error",
+        description: "Chapter number is missing or invalid. Please enter a valid chapter number.",
+        variant: "destructive",
+      });
+      return;
+    }
     updateChapterMutation.mutate({ ...data, status: submitStatus });
   };
   
@@ -397,7 +406,8 @@ export default function EditChapterPage() {
               ) : status === "draft" ? (
                 <>
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={() => onSubmit(form.getValues(), "draft")}
                     disabled={updateChapterMutation.isPending}
                   >
                     {updateChapterMutation.isPending ? "Saving..." : "Save Changes"}

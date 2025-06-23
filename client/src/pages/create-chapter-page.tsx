@@ -137,7 +137,9 @@ export default function CreateChapterPage() {
   
   // Handle form submission
   const onSubmit = (data: ChapterFormValues, status: string = "published") => {
-    createChapterMutation.mutate({ ...data, status });
+    // Always assign a valid chapterNumber for drafts
+    let chapterNumber = data.chapterNumber && data.chapterNumber > 0 ? data.chapterNumber : nextChapterNumber;
+    createChapterMutation.mutate({ ...data, chapterNumber, status });
   };
   
   // Text formatting helpers

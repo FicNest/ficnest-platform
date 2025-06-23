@@ -488,20 +488,22 @@ export default function NovelDetailPage() {
                 ))}
               </div>
               
-              <div className="flex items-center gap-6 text-gray-600 mb-6">
+              <div className="flex items-center gap-2 mb-6 text-gray-600">
                 <div className="flex items-center">
-                  <Eye className="mr-2 h-5 w-5" />
-                  <span>{novel.viewCount ? novel.viewCount.toLocaleString() : 0}</span> Reads
+                  <Eye className="mr-1 h-4 w-4" />
+                  <span className="text-base">{novel.viewCount ? novel.viewCount.toLocaleString() : 0}</span> Reads
                 </div>
                 <div className="flex items-center">
-                  <BookmarkIcon className="mr-2 h-5 w-5" />
-                  <span>{novel.bookmarkCount ? novel.bookmarkCount.toLocaleString() : 0}</span> Bookmarks
+                  <BookmarkIcon className="mr-1 h-4 w-4" />
+                  <span className="text-base">{novel.bookmarkCount ? novel.bookmarkCount.toLocaleString() : 0}</span> Bookmarks
                 </div>
                 <div className="flex items-center">
-                  <Star className="mr-2 h-5 w-5 text-yellow-500" />
-                  <span>{averageRating.toFixed(1)}</span>
-                  <span className="text-sm ml-1">
-                    ({novel.reviews && novel.reviews.length ? novel.reviews.length : 0} {novel.reviews && novel.reviews.length === 1 ? 'review' : 'reviews'})
+                  <Star className="mr-1 h-4 w-4 text-yellow-500" />
+                  <span className="inline-flex items-baseline gap-1 text-base">
+                    <span className="font-semibold">{averageRating.toFixed(1)}</span>
+                    <span className="text-gray-500 text-xs">
+                      ({novel.reviews && novel.reviews.length ? novel.reviews.length : 0} {novel.reviews && novel.reviews.length === 1 ? 'review' : 'reviews'})
+                    </span>
                   </span>
                 </div>
               </div>
@@ -668,8 +670,8 @@ export default function NovelDetailPage() {
           
           {/* Review summary with rating stars */}
           {novel.reviews && novel.reviews.length > 0 && (
-            <div className="flex items-center gap-2 mb-6">
-              <div className="flex">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2 mb-6 text-center sm:text-left">
+              <div className="flex justify-center sm:justify-start">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
@@ -679,9 +681,11 @@ export default function NovelDetailPage() {
                   />
                 ))}
               </div>
-              <span className="text-lg font-semibold">{averageRating.toFixed(1)}</span>
-              <span className="text-gray-500">
-                ({novel.reviews.length} {novel.reviews.length === 1 ? 'review' : 'reviews'})
+              <span className="inline-flex items-baseline gap-1">
+                <span className="text-lg font-semibold">{averageRating.toFixed(1)}</span>
+                <span className="text-gray-500 text-sm">
+                  ({novel.reviews.length} {novel.reviews.length === 1 ? 'review' : 'reviews'})
+                </span>
               </span>
             </div>
           )}
