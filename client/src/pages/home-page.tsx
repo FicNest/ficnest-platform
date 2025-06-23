@@ -61,7 +61,7 @@ function ContinueReading({ readingProgress }: ContinueReadingProps) {
   return (
     <div className="mb-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-900">Continue Reading</h2>
-      <div className="bg-white rounded-lg shadow-sm px-3 py-2 flex items-center gap-3 w-full max-w-lg mx-auto">
+      <div className="bg-white rounded-lg shadow-sm px-3 py-2 flex flex-row items-center gap-3 w-full">
         {/* Cover image */}
         {readingProgress.novel.coverImage ? (
           <img
@@ -77,20 +77,20 @@ function ContinueReading({ readingProgress }: ContinueReadingProps) {
             <BookOpen className="text-gray-400" size={20} />
           </div>
         )}
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
+        {/* Info and progress */}
+        <div className="flex-1 min-w-0 w-full flex flex-col">
+          <div>
             <h3 className="font-semibold text-base truncate">{readingProgress.novel.title}</h3>
+            <p className="text-xs text-gray-500 truncate">
+              by <Link to={`/authors/${readingProgress.novel.authorId}`} className="text-primary hover:underline">
+                {readingProgress.novel.authorName || "Unknown Author"}
+              </Link>
+            </p>
+            <p className="text-xs text-blue-600 truncate">
+              Chapter {readingProgress.chapter.chapterNumber}: "{readingProgress.chapter.title}"
+            </p>
           </div>
-          <p className="text-xs text-gray-500 truncate">
-            by <Link to={`/authors/${readingProgress.novel.authorId}`} className="text-primary hover:underline">
-              {readingProgress.novel.authorName || "Unknown Author"}
-            </Link>
-          </p>
-          <p className="text-xs text-blue-600 truncate">
-            Chapter {readingProgress.chapter.chapterNumber}: "{readingProgress.chapter.title}"
-          </p>
-          {/* Progress bar and percentage side by side */}
+          {/* Progress bar and percentage side by side, always below info */}
           <div className="flex items-center gap-2 mt-1">
             <div className="flex-1 bg-gray-200 rounded-full h-1">
               <div
@@ -101,12 +101,14 @@ function ContinueReading({ readingProgress }: ContinueReadingProps) {
             <span className="text-xs text-gray-400 min-w-[2.5rem] text-right">{readingProgress.progress}%</span>
           </div>
         </div>
-        {/* Button */}
-        <Link to={`/novels/${readingProgress.novel.title}/chapters/${readingProgress.chapter.chapterNumber}`}> 
-          <Button size="sm" className="ml-2 whitespace-nowrap">
-            Continue
-          </Button>
-        </Link>
+        {/* Button: always compact, never full width */}
+        <div className="md:ml-2 flex-shrink-0">
+          <Link to={`/novels/${readingProgress.novel.title}/chapters/${readingProgress.chapter.chapterNumber}`}> 
+            <Button size="sm" className="whitespace-nowrap">
+              Continue
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
