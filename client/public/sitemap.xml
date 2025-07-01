@@ -2,29 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Static pages -->
   <url><loc>https://ficnest.com/</loc></url>
-  <url><loc>https://ficnest.com/search-results</loc></url>
-  <url><loc>https://ficnest.com/chapter</loc></url>
-  <url><loc>https://ficnest.com/novel-detail</loc></url>
-  <url><loc>https://ficnest.com/edit-novel</loc></url>
-  <url><loc>https://ficnest.com/author-dashboard</loc></url>
+  <url><loc>https://ficnest.com/search</loc></url>
+  <url><loc>https://ficnest.com/browse</loc></url>
+  <url><loc>https://ficnest.com/author/dashboard</loc></url>
   <url><loc>https://ficnest.com/ranking</loc></url>
   <url><loc>https://ficnest.com/create-chapter</loc></url>
-  <url><loc>https://ficnest.com/author-profile</loc></url>
-  <url><loc>https://ficnest.com/terms-of-service</loc></url>
-  <url><loc>https://ficnest.com/reading-history</loc></url>
   <url><loc>https://ficnest.com/profile</loc></url>
-  <url><loc>https://ficnest.com/privacy-policy</loc></url>
-  <url><loc>https://ficnest.com/novel-management</loc></url>
-  <url><loc>https://ficnest.com/genre</loc></url>
-  <url><loc>https://ficnest.com/edit-chapter</loc></url>
-  <url><loc>https://ficnest.com/create-novel</loc></url>
-  <url><loc>https://ficnest.com/copyright-policy</loc></url>
-  <url><loc>https://ficnest.com/content-guidelines</loc></url>
-  <url><loc>https://ficnest.com/browse</loc></url>
+  <url><loc>https://ficnest.com/terms</loc></url>
+  <url><loc>https://ficnest.com/reading-history</loc></url>
+  <url><loc>https://ficnest.com/privacy</loc></url>
+  <url><loc>https://ficnest.com/copyright</loc></url>
+  <url><loc>https://ficnest.com/guidelines</loc></url>
   <url><loc>https://ficnest.com/bookmarks</loc></url>
   <url><loc>https://ficnest.com/auth</loc></url>
-  <!-- Dynamic content (examples, automate for full coverage): -->
-  <!-- <url><loc>https://ficnest.com/novel/novel-id</loc></url> -->
-  <!-- <url><loc>https://ficnest.com/chapter/chapter-id</loc></url> -->
-  <!-- To include all novels/chapters, automate sitemap generation from your database. -->
+  <!--
+    Dynamic content:
+    To include all novels and chapters, automate sitemap generation from your database.
+    Example dynamic URLs:
+      <url><loc>https://ficnest.com/novel/novel-id</loc></url>
+      <url><loc>https://ficnest.com/chapter/chapter-id</loc></url>
+    Consider writing a script to generate these entries for every novel and chapter in your database.
+  -->
+  <!-- ads.txt is present in the public directory for ad/discovery compliance -->
 </urlset> 
