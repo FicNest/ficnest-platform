@@ -279,8 +279,7 @@ export class DatabaseStorage implements IStorage {
         .where(
           and(
             eq(novels.status, "published"),
-            // Using sql template for case-insensitive check within the array
-            sql`${genreLower} = ANY(lower(novels.genres)::text[])` // Cast genres to text array for lower()
+            sql`EXISTS (SELECT 1 FROM unnest(${novels.genres}) AS g WHERE lower(g) = ${genreLower})`
           )
         )
         .limit(limit) // Apply limit in the query
