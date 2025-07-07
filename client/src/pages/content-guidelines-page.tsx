@@ -1,5 +1,5 @@
 import React from "react";
-import { FileText, AlertTriangle } from "lucide-react";
+import { FileText } from "lucide-react";
 
 export default function ContentGuidelinesPage() {
   return (
@@ -9,83 +9,58 @@ export default function ContentGuidelinesPage() {
           <FileText className="mr-2" />
           Content Guidelines
         </h1>
-        
         <p className="text-gray-600 mb-8">Effective Date: May 20, 2025</p>
-        
         <div className="prose max-w-none">
-          <p>
-            These guidelines ensure FicNest remains a safe and enjoyable place for all readers and creators.
-          </p>
-          
+          <p>These guidelines ensure FicNest remains a safe and enjoyable place for all readers and creators.</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">1. Community Standards</h2>
-          
           <ul className="list-disc pl-6 space-y-2">
-            <li>
-              <strong>Respectful Comments</strong>: Engage constructively. No hate speech, harassment, or personal attacks.
-            </li>
-            <li>
-              <strong>No Spoilers Without Warning</strong>: Use spoiler tags or warnings.
-            </li>
-            <li>
-              <strong>Stay on Topic</strong>: Comments should be relevant to the novel or chapter.
-            </li>
+            <li><strong>Respectful Comments</strong>: Engage constructively. No hate speech, harassment, or personal attacks.</li>
+            <li><strong>No Spoilers Without Warning</strong>: Use spoiler tags or warnings.</li>
+            <li><strong>Stay on Topic</strong>: Comments should be relevant to the novel or chapter.</li>
           </ul>
-          
           <h2 className="text-2xl font-semibold mt-8 mb-4">2. Ratings & Reviews</h2>
-          
           <ul className="list-disc pl-6 space-y-2">
             <li>Be fair and honest.</li>
             <li>Rate based on story quality, pacing, characters, etc.</li>
             <li>Do not manipulate ratings using multiple accounts.</li>
           </ul>
-          
           <h2 className="text-2xl font-semibold mt-8 mb-4">3. Content Classifications</h2>
-          
           <ul className="list-disc pl-6 space-y-2">
             <li><strong>Everyone</strong> – Safe for all ages.</li>
             <li><strong>Teen (13+)</strong> – Mild themes or language.</li>
             <li><strong>Mature (18+)</strong> – Contains adult themes or strong language. Labeled accordingly.</li>
           </ul>
-          
           <h2 className="text-2xl font-semibold mt-8 mb-4">4. Prohibited Conduct</h2>
-          
-          <div className="bg-red-50 p-6 rounded-lg my-4 border-l-4 border-red-400">
-            <ul className="list-disc pl-6 space-y-2 text-red-700">
-              <li><strong>Scraping Content</strong>: Using bots or scripts to copy content is banned.</li>
-              <li><strong>Unauthorized Distribution</strong>: Sharing FicNest content on other sites is forbidden.</li>
-              <li><strong>Impersonation</strong>: Do not pose as authors or staff.</li>
-              <li><strong>Spam</strong>: Promotional or repetitive posts will be removed.</li>
-              <li><strong>Account Sharing</strong>: One account per user. Shared accounts may be suspended.</li>
-            </ul>
-          </div>
-          
+          <ul className="list-disc pl-6 space-y-2">
+            <li><strong>Scraping Content</strong>: Using bots or scripts to copy content is banned.</li>
+            <li><strong>Unauthorized Distribution</strong>: Sharing FicNest content on other sites is forbidden.</li>
+            <li><strong>Impersonation</strong>: Do not pose as authors or staff.</li>
+            <li><strong>Spam</strong>: Promotional or repetitive posts will be removed.</li>
+            <li><strong>Account Sharing</strong>: One account per user. Shared accounts may be suspended.</li>
+          </ul>
           <h2 className="text-2xl font-semibold mt-8 mb-4">5. Content Access</h2>
-          
           <ul className="list-disc pl-6 space-y-2">
             <li>Premium content is currently not behind a paywall.</li>
             <li>Users must not attempt to extract or redistribute site content.</li>
             <li>Respect creators by engaging fairly with their work.</li>
           </ul>
-          
           <h2 className="text-2xl font-semibold mt-8 mb-4">6. Reporting & Moderation</h2>
-          
           <ul className="list-disc pl-6 space-y-2">
             <li>Use the report feature to flag rule violations.</li>
             <li>Do not engage with problematic users directly.</li>
             <li>Moderators may issue warnings, restrict access, or suspend accounts as needed.</li>
           </ul>
-          
-          <h2 className="text-2xl font-semibold mt-8 mb-4">7. Amendments</h2>
-          
-          <p>
-            These guidelines may be updated. Continued use means you agree to follow any changes.
-          </p>
-          
+          <h2 className="text-2xl font-semibold mt-8 mb-4">7. Legal Compliance & Safe Harbor</h2>
+          <ul className="list-disc pl-6 space-y-2">
+            <li><strong>Copyright Respect</strong>: All content is posted in good faith as transformative fanwork</li>
+            <li><strong>Cooperation</strong>: We fully cooperate with legal investigations and comply with valid court orders</li>
+            <li><strong>Immediate Removal</strong>: Any content will be removed within 24 hours of receiving a valid legal notice</li>
+            <li><strong>No Monetary Gain</strong>: No direct monetization of copyrighted content occurs on this platform</li>
+          </ul>
+          <h2 className="text-2xl font-semibold mt-8 mb-4">8. Amendments</h2>
+          <p>These guidelines may be updated. Continued use means you agree to follow any changes.</p>
           <div className="mt-8 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-            <p className="text-blue-700">
-              These guidelines aim to create a positive reading environment where users can enjoy content while respecting 
-              the work of creators and the experience of other readers.
-            </p>
+            <p className="text-blue-700">These guidelines aim to create a positive reading environment where users can enjoy content while respecting the work of creators and the experience of other readers.</p>
           </div>
         </div>
       </div>

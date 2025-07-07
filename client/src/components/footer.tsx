@@ -63,6 +63,9 @@ export default function Footer() {
         
         <div className="pt-8 mt-8 border-t border-border text-center text-muted-foreground text-sm">
           <p>&copy; {new Date().getFullYear()} FicNest - All rights reserved.</p>
+          <p className="mt-2 text-xs text-gray-500">
+            Disclaimer: This is a fanfiction website. All original characters, plots, and worlds belong to their respective copyright holders. No copyright infringement is intended. Content will be removed upon request by copyright holders.
+          </p>
         </div>
       </div>
     </footer>
