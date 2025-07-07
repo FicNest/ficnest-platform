@@ -35,6 +35,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import BrowsePage from "@/pages/browse-page";
 import RankingPage from "@/pages/ranking-page";
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function Router() {
   const [location] = useLocation();
@@ -181,6 +183,8 @@ function App() {
           <Router />
         </AuthProvider>
       </QueryClientProvider>
+      <Analytics />
+      <SpeedInsights />
     </ThemeProvider>
   );
 }
