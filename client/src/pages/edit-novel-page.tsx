@@ -465,7 +465,7 @@ export default function EditNovelPage() {
                   <div className="w-full sm:w-auto mb-2 sm:mb-0">
                     <h3 className="font-semibold">Chapter {chapter.chapterNumber}: {chapter.title}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(chapter.createdAt).toLocaleDateString()}
+                      {new Date(chapter.publishedAt || chapter.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">

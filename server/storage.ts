@@ -110,6 +110,17 @@ export interface IStorage {
   getNovelByName(name: string): Promise<Novel | null>;
 }
 
+// Helper to sanitize publishedAt
+function sanitizePublishedAt(val: unknown): Date | null | undefined {
+  if (val === null || typeof val === 'undefined') return null;
+  if (val instanceof Date) return val;
+  if (typeof val === 'string') {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return undefined;
+}
+
 export class DatabaseStorage implements IStorage {
   sessionStore: any;
   
@@ -372,14 +383,34 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createChapter(insertChapter: InsertChapter): Promise<Chapter> {
-    const [chapter] = await db.insert(chapters).values(insertChapter).returning();
+    const { title, novelId, chapterNumber, content, status, authorNote } = insertChapter;
+    const publishedAt = sanitizePublishedAt(insertChapter.publishedAt);
+    const insertObj: any = { title, novelId, chapterNumber, content, status, authorNote };
+    if (typeof publishedAt !== 'undefined') {
+      insertObj.publishedAt = publishedAt;
+    }
+    const [chapter] = await db.insert(chapters).values(insertObj).returning();
     return chapter;
   }
 
   async updateChapter(novelId: number, chapterNumber: number, updateChapter: Partial<InsertChapter>): Promise<Chapter | undefined> {
+    const setObj: any = { updatedAt: new Date() };
+    if (updateChapter.title !== undefined) setObj.title = updateChapter.title;
+    if (updateChapter.novelId !== undefined) setObj.novelId = updateChapter.novelId;
+    if (updateChapter.chapterNumber !== undefined) setObj.chapterNumber = updateChapter.chapterNumber;
+    if (updateChapter.content !== undefined) setObj.content = updateChapter.content;
+    if (updateChapter.status !== undefined) setObj.status = updateChapter.status;
+    if (updateChapter.authorNote !== undefined) setObj.authorNote = updateChapter.authorNote;
+    let publishedAt = sanitizePublishedAt(updateChapter.publishedAt);
+    if (updateChapter.status === 'published' && (typeof publishedAt === 'undefined' || publishedAt === null)) {
+      publishedAt = new Date();
+    }
+    if (typeof publishedAt !== 'undefined') {
+      setObj.publishedAt = publishedAt;
+    }
     const [chapter] = await db
       .update(chapters)
-      .set({ ...updateChapter, updatedAt: new Date() })
+      .set(setObj)
       .where(
         and(
           eq(chapters.novelId, novelId),
@@ -1056,7 +1087,6 @@ export class DatabaseStorage implements IStorage {
   async getLatestChapters(limit: number): Promise<Chapter[]> {
     try {
       console.log(`Getting latest ${limit} published chapters`);
-      
       // Get published chapters ordered by update date (newest first)
       const latestChapters = await db
         .select({
@@ -1071,6 +1101,7 @@ export class DatabaseStorage implements IStorage {
           status: chapters.status,
           createdAt: chapters.createdAt,
           updatedAt: chapters.updatedAt,
+          publishedAt: chapters.publishedAt,
           // Select novel fields
           novel: {
             id: novels.id,
@@ -1087,7 +1118,6 @@ export class DatabaseStorage implements IStorage {
         .where(eq(chapters.status, "published"))
         .orderBy(desc(chapters.updatedAt))
         .limit(limit);
-      
       console.log(`Found ${latestChapters.length} latest chapters with novel and author info`);
       return latestChapters;
     } catch (error) {

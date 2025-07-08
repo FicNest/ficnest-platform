@@ -154,7 +154,7 @@ function ChapterItem({
           <span>Chapter {chapter.chapterNumber}:</span> <span>{chapter.title}</span>
         </Link>
         <div className="text-sm text-gray-500 mt-1">
-          <span>{new Date(chapter.createdAt).toLocaleDateString()}</span> · 
+          <span>{new Date(chapter.publishedAt || chapter.createdAt).toLocaleDateString()}</span> · 
           <span>{Math.ceil(chapter.content.length / 1000)} min read</span>
         </div>
       </div>

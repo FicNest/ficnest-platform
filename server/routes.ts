@@ -1405,7 +1405,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "You can only publish your own chapters" });
       }
       // Update the chapter status to 'published'
-      const updatedChapter = await storage.updateChapter(chapter.novelId, chapter.chapterNumber, { status: "published" });
+      const updatedChapter = await storage.updateChapter(chapter.novelId, chapter.chapterNumber, { status: "published", publishedAt: new Date() });
       if (!updatedChapter) {
         return res.status(500).json({ message: "Error publishing chapter" });
       }

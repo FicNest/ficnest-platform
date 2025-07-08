@@ -107,6 +107,7 @@ export const chapters = pgTable("chapters", {
   status: text("status").notNull().default("draft"), // draft, published
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  publishedAt: timestamp("published_at"), // nullable, set when published
 }, (table) => [
   unique("chapters_novel_id_chapter_number_unique").on(table.novelId, table.chapterNumber),
   foreignKey({
@@ -123,9 +124,10 @@ export const insertChapterSchema = createInsertSchema(chapters).pick({
   chapterNumber: true,
   authorNote: true,
   status: true,
-});
-
-export type InsertChapter = z.infer<typeof insertChapterSchema>;
+})
+// Add publishedAt as optional for backend updates
+type InsertChapterBase = z.infer<typeof insertChapterSchema>;
+export type InsertChapter = InsertChapterBase & { publishedAt?: Date | string | null };
 export type Chapter = InferSelectModel<typeof chapters>;
 
 // Bookmarks table
