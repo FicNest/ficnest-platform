@@ -20,7 +20,6 @@ import { AuthModal } from "@/components/auth-modal";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { useTheme } from "../components/theme-provider";
-import InPagePushAd from "@/components/InPagePushAd";
 
 const LazyAuthModal = React.lazy(() => import("@/components/auth-modal").then(module => ({ default: module.AuthModal })));
 
@@ -320,9 +319,6 @@ export default function HomePage() {
         <div className="mb-10 bg-white rounded-xl p-8">
           <AnimatedLogo />
         </div>
-
-        {/* InPagePushAd Banner after logo, before Latest Fan-Fics */}
-        <InPagePushAd />
 
         {/* Continue Reading Section (for logged-in users) */}
         {user && enhancedReadingProgress?.chapter && (
