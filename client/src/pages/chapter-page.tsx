@@ -29,6 +29,7 @@ export default function ChapterPage() {
   const [showFontPanel, setShowFontPanel] = useState(false);
   const fontPanelRef = useRef<HTMLDivElement>(null);
   const autoHideTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const bannerAdRef = useRef<HTMLDivElement>(null);
   
   // Font options with their display names and CSS values
   const fontOptions = [
@@ -530,6 +531,22 @@ export default function ChapterPage() {
     setFontFamily(value);
     resetAutoHideTimer();
   };
+
+  // Inject Vignette Banner Ad script
+  useEffect(() => {
+    if (bannerAdRef.current) bannerAdRef.current.innerHTML = "";
+    const script = document.createElement("script");
+    script.innerHTML = `
+      (function(d,z,s,c){
+        s.src='//oamoameevee.net/400/9574214';
+        s.onerror=s.onload=E;
+        function E(){c&&c();c=null}
+        try{(document.body||document.documentElement).appendChild(s)}catch(e){E()}
+      })('oamoameevee.net',9574214,document.createElement('script'),_fhgynucm)
+    `;
+    script.async = true;
+    if (bannerAdRef.current) bannerAdRef.current.appendChild(script);
+  }, []);
   
   // Handle error state
   if (chapterError) {
@@ -668,7 +685,8 @@ export default function ChapterPage() {
               </p>
             ))}
           </div>
-          
+          {/* Vignette Banner Ad at the end of chapter content */}
+          <div ref={bannerAdRef} style={{ margin: "32px 0", textAlign: "center" }} />
           {chapter.authorNote && (
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="bg-gray-50 p-4 rounded-lg">
