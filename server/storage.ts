@@ -76,6 +76,7 @@ export interface IStorage {
   getReadingProgress(userId: number, novelId: number): Promise<ReadingProgress | undefined>;
   getRecentlyRead(userId: number, limit: number): Promise<ReadingProgress[]>;
   createOrUpdateReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress>;
+  getReadingHistory(userId: number, novelId: number): Promise<ReadingProgress | null>;
   
   // Comment operations
   getComment(id: number): Promise<Comment | undefined>;
@@ -538,6 +539,35 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error(`Error getting reading progress for user ${userId}, novel ${novelId}:`, error);
       return undefined;
+    }
+  }
+
+  async getReadingHistory(userId: number, novelId: number): Promise<ReadingProgress | null> {
+    try {
+      const [history] = await db
+        .select()
+        .from(readingProgress)
+        .where(
+          and(
+            eq(readingProgress.userId, userId),
+            eq(readingProgress.novelId, novelId)
+          )
+        )
+        .orderBy(desc(readingProgress.lastReadAt))
+        .limit(1);
+
+      if (history) {
+        return {
+          ...history,
+          lastReadAt: history.lastReadAt instanceof Date
+            ? history.lastReadAt.toISOString()
+            : String(history.lastReadAt),
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error getting reading history for user ${userId} and novel ${novelId}:`, error);
+      return null;
     }
   }
 

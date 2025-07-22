@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ReadingProgress } from "../../../shared/schema";
 
 type NovelWithReviews = Novel & {
   reviews: (Review & { user: { username: string } })[];
@@ -253,6 +254,10 @@ export default function NovelDetailPage() {
     queryKey: [`/api/bookmarks/${novel?.id}`],
     enabled: !!user,
   });
+  const { data: readingHistory } = useQuery<ReadingProgress | null>({
+    queryKey: [`/api/novels/${novel?.id}/reading-history`],
+    enabled: !!user && !!novel?.id,
+  });
   
   // Toggle bookmark
   const bookmarkMutation = useMutation({
@@ -450,6 +455,8 @@ export default function NovelDetailPage() {
   
   // Find first chapter for the Start Reading button
   const firstChapter = chapters && chapters.length > 0 ? chapters[0] : null;
+  const lastReadChapter = readingHistory ? chapters?.find(c => c.id === readingHistory.chapterId) : null;
+  const startChapter = lastReadChapter || firstChapter;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -516,10 +523,10 @@ export default function NovelDetailPage() {
               </div>
               
               <div className="flex flex-wrap gap-3">
-                {firstChapter && (
-                  <Link to={`/novels/${encodeURIComponent(novel.title)}/chapters/${firstChapter.chapterNumber}`}>
+                {startChapter && (
+                  <Link to={`/novels/${encodeURIComponent(novel.title)}/chapters/${startChapter.chapterNumber}`}>
                     <Button>
-                      Start Reading
+                      {readingHistory ? "Continue Reading" : "Start Reading"}
                     </Button>
                   </Link>
                 )}

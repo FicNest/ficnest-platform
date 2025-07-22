@@ -629,7 +629,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // === Reading Progress Routes ===
-  
+    // Get user's reading history for a novel
+  app.get("/api/novels/:novelId/reading-history", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const novelId = Number(req.params.novelId);
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const readingHistory = await storage.getReadingHistory(userId, novelId);
+      
+      if (readingHistory) {
+        res.json(readingHistory);
+      } else {
+        res.json(null);
+      }
+    } catch (error) {
+      console.error("Error fetching reading history:", error);
+      res.status(500).json({ message: "Error fetching reading history" });
+    }
+  });
   // Get user's reading progress for a novel
   app.get("/api/reading-progress/:novelId", isAuthenticated, async (req: Request, res: Response) => {
     try {
