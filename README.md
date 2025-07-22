@@ -126,5 +126,3 @@ This project runs the frontend and backend servers concurrently.
     The application will be served from `http://localhost:3000`.
 
 ---
-
-Happy coding! 
