@@ -59,6 +59,18 @@ interface ChapterWithNovelInfo {
   username: string;
 }
 
+interface GroupedUpdate {
+  novel: ChapterWithNovelInfo['novel'];
+  chapters: {
+    id: number;
+    title: string;
+    chapterNumber: number;
+    updatedAt: string;
+    createdAt: string;
+  }[];
+  authorUsername: string;
+}
+
 // Extend Novel type for topNovels to include authorName
 interface TopNovel extends Novel {
   authorName?: string;
@@ -244,7 +256,7 @@ export default function HomePage() {
     data: latestUpdates, 
     isLoading: isLoadingUpdates,
     refetch: refetchUpdates 
-  } = useQuery<ChapterWithNovelInfo[]>({
+  } = useQuery<GroupedUpdate[]>({
     queryKey: ['/api/chapters/latest'],
     queryFn: async () => {
       const res = await fetch('/api/chapters/latest?limit=10');
@@ -276,21 +288,6 @@ export default function HomePage() {
   const handleRefreshUpdates = () => {
     refetchUpdates();
   };
-  
-  // Group latestUpdates by novel
-  const groupedUpdates = (latestUpdates || []).reduce((acc, chapter) => {
-    const key = chapter.novel.id;
-    if (!acc[key]) acc[key] = { novel: chapter.novel, chapters: [] };
-    acc[key].chapters.push(chapter);
-    return acc;
-  }, {} as Record<number, { novel: ChapterWithNovelInfo['novel'], chapters: ChapterWithNovelInfo[] }>);
-  let groupedUpdatesArr = Object.values(groupedUpdates);
-  // Sort by most recent chapter update (descending)
-  groupedUpdatesArr.sort((a, b) => {
-    const aLatest = a.chapters.reduce((max, c) => c.updatedAt > max ? c.updatedAt : max, a.chapters[0]?.updatedAt || '');
-    const bLatest = b.chapters.reduce((max, c) => c.updatedAt > max ? c.updatedAt : max, b.chapters[0]?.updatedAt || '');
-    return new Date(bLatest).getTime() - new Date(aLatest).getTime();
-  });
   
   const handleCreateAccount = () => {
     setShowAuthModal(true);
@@ -485,7 +482,7 @@ export default function HomePage() {
               </div>
             ) : latestUpdates && latestUpdates.length > 0 ? (
               <div className="space-y-2 max-h-96 overflow-y-auto md:max-h-none md:overflow-visible">
-                {groupedUpdatesArr.map(({ novel, chapters }) => (
+                {latestUpdates.map(({ novel, chapters }) => (
                   <div key={novel.id} className="flex gap-3 p-2 bg-white rounded shadow-sm">
                     {novel.coverImage ? (
                       <img
@@ -504,48 +501,18 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-0.5">
                         <div className="font-semibold text-base truncate">{novel.title}</div>
-                        <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">{getRelativeTime(chapters[0].updatedAt)}</span>
+                        <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">{getRelativeTime(chapters[0]?.updatedAt)}</span>
                       </div>
                       <div className="space-y-0.5">
-                        {chapters.length > 3 ? (
-                          <>
-                            {/* Sort chapters by createdAt ascending for first, descending for last */}
-                            {(() => {
-                              const sorted = [...chapters].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-                              const first = sorted[0];
-                              const last = sorted[sorted.length - 1];
-                              return (
-                                <>
-                                  <Link
-                                    key={first.id}
-                                    to={`/novels/${novel.title}/chapters/${first.chapterNumber}`}
-                                    className="block text-xs text-gray-800 hover:underline truncate"
-                                  >
-                                    <span className="font-bold text-sm text-black">#{first.chapterNumber}</span> {first.title}
-                                  </Link>
-                                  <div className="text-xs text-gray-500 text-center">...</div>
-                                  <Link
-                                    key={last.id}
-                                    to={`/novels/${novel.title}/chapters/${last.chapterNumber}`}
-                                    className="block text-xs text-gray-800 hover:underline truncate"
-                                  >
-                                    <span className="font-bold text-sm text-black">#{last.chapterNumber}</span> {last.title}
-                                  </Link>
-                                </>
-                              );
-                            })()}
-                          </>
-                        ) : (
-                          chapters.map((chapter) => (
-                            <Link
-                              key={chapter.id}
-                              to={`/novels/${novel.title}/chapters/${chapter.chapterNumber}`}
-                              className="block text-xs text-gray-800 hover:underline truncate"
-                            >
-                              <span className="font-bold text-sm text-black">#{chapter.chapterNumber}</span> {chapter.title}
-                            </Link>
-                          ))
-                        )}
+                        {chapters.slice(0, 2).map((chapter) => (
+                          <Link
+                            key={chapter.id}
+                            to={`/novels/${novel.title}/chapters/${chapter.chapterNumber}`}
+                            className="block text-xs text-gray-800 hover:underline truncate"
+                          >
+                            <span className="font-bold text-sm text-black">#{chapter.chapterNumber}</span> {chapter.title}
+                          </Link>
+                        ))}
                       </div>
                     </div>
                   </div>

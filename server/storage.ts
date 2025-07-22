@@ -36,7 +36,7 @@ export interface CommentWithMetadata extends Comment {
 
 export interface IStorage {
   //Latest chapters
-  getLatestChapters(limit: number): Promise<Chapter[]>;
+  getLatestChapters(limit: number): Promise<any[]>;
 
   // User operations
   getUser(id: number): Promise<User | undefined>;
@@ -1114,41 +1114,49 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
-  async getLatestChapters(limit: number): Promise<Chapter[]> {
+  async getLatestChapters(limit: number): Promise<any[]> {
     try {
-      console.log(`Getting latest ${limit} published chapters`);
-      // Get published chapters ordered by update date (newest first)
+      console.log(`Getting latest chapters for top ${limit} updated novels`);
+
+      const latestNovelsQuery = await db
+        .select({
+          novelId: chapters.novelId,
+        })
+        .from(chapters)
+        .where(eq(chapters.status, "published"))
+        .groupBy(chapters.novelId)
+        .orderBy(desc(sql`max(${chapters.updatedAt})`))
+        .limit(limit);
+
+      const latestNovelIds = latestNovelsQuery.map(n => n.novelId);
+
+      if (latestNovelIds.length === 0) {
+        return [];
+      }
+
       const latestChapters = await db
         .select({
-          // Select all chapter fields
-          id: chapters.id,
-          novelId: chapters.novelId,
-          title: chapters.title,
-          content: chapters.content,
+          chapterId: chapters.id,
+          chapterTitle: chapters.title,
           chapterNumber: chapters.chapterNumber,
-          authorNote: chapters.authorNote,
-          viewCount: chapters.viewCount,
-          status: chapters.status,
-          createdAt: chapters.createdAt,
-          updatedAt: chapters.updatedAt,
-          publishedAt: chapters.publishedAt,
-          // Select novel fields
-          novel: {
-            id: novels.id,
-            title: novels.title,
-            coverImage: novels.coverImage,
-            authorId: novels.authorId,
-          },
-          // Select author username
-          username: users.username,
+          chapterUpdatedAt: chapters.updatedAt,
+          chapterCreatedAt: chapters.createdAt,
+          novelId: novels.id,
+          novelTitle: novels.title,
+          novelCoverImage: novels.coverImage,
+          authorUsername: users.username,
         })
         .from(chapters)
         .leftJoin(novels, eq(chapters.novelId, novels.id))
         .leftJoin(users, eq(novels.authorId, users.id))
-        .where(eq(chapters.status, "published"))
-        .orderBy(desc(chapters.updatedAt))
-        .limit(limit);
-      console.log(`Found ${latestChapters.length} latest chapters with novel and author info`);
+        .where(
+          and(
+            eq(chapters.status, "published"),
+            inArray(chapters.novelId, latestNovelIds)
+          )
+        )
+        .orderBy(desc(chapters.updatedAt), desc(chapters.id));
+
       return latestChapters;
     } catch (error) {
       console.error("Error fetching latest chapters:", error);

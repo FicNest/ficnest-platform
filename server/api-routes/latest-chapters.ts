@@ -9,61 +9,45 @@ export async function getLatestChapters(req: Request, res: Response) {
     
     const limit = Number(req.query.limit) || 10;
     
-    console.log(`Fetching latest chapters with limit ${limit}`);
+    console.log(`Fetching latest chapters for top ${limit} updated novels`);
     
-    // Get latest chapters data
-    const latestChapters = await storage.getLatestChapters(limit);
-    
-    // Enhance with novel and author information
-    const enhancedChapters = [];
-    
-    for (const chapter of latestChapters) {
-      try {
-        // Get novel data
-        const novel = await storage.getNovel(chapter.novelId);
+    // Get latest chapters data, which is pre-sorted by novel update time
+    const latestChaptersData = await storage.getLatestChapters(limit);
+
+    const orderedGroupedChapters: any[] = [];
+    const novelIdSet = new Set<number>();
+
+    for (const item of latestChaptersData) {
+      if (!novelIdSet.has(item.novelId)) {
+        // Find all chapters for the current novel
+        const novelChapters = latestChaptersData
+          .filter(c => c.novelId === item.novelId)
+          .map(c => ({
+            id: c.chapterId,
+            title: c.chapterTitle,
+            chapterNumber: c.chapterNumber,
+            updatedAt: c.chapterUpdatedAt,
+            createdAt: c.chapterCreatedAt,
+          }))
+          // Sort chapters by chapter number (descending) to get latest first
+          .sort((a, b) => b.chapterNumber - a.chapterNumber);
         
-        // Skip if novel doesn't exist
-        if (!novel) {
-          console.log(`Novel ${chapter.novelId} not found for chapter ${chapter.id}`);
-          continue;
-        }
-        
-        // Get author username if we have novel
-        let username = "Unknown Author";
-        if (novel?.authorId) {
-          const author = await storage.getUser(novel.authorId);
-          if (author) {
-            username = author.username;
-          }
-        }
-        
-        // Add novel with username to the chapter
-        enhancedChapters.push({
-          id: chapter.id,
-          novelId: chapter.novelId,
-          title: chapter.title,
-          content: chapter.content,
-          chapterNumber: chapter.chapterNumber,
-          authorNote: chapter.authorNote,
-          viewCount: chapter.viewCount,
-          status: chapter.status,
-          createdAt: typeof chapter.createdAt === 'string' ? chapter.createdAt : chapter.createdAt.toISOString(),
-          updatedAt: typeof chapter.updatedAt === 'string' ? chapter.updatedAt : chapter.updatedAt.toISOString(),
+        orderedGroupedChapters.push({
           novel: {
-            id: novel.id,
-            title: novel.title,
-            authorId: novel.authorId,
-            coverImage: novel.coverImage
+            id: item.novelId,
+            title: item.novelTitle,
+            coverImage: item.novelCoverImage,
           },
-          username: username
+          chapters: novelChapters,
+          authorUsername: item.authorUsername,
         });
-      } catch (error) {
-        console.error(`Error enhancing chapter ${chapter.id}:`, error);
+        
+        novelIdSet.add(item.novelId);
       }
     }
     
-    console.log(`Returning ${enhancedChapters.length} latest chapters`);
-    res.json(enhancedChapters);
+    console.log(`Returning ${orderedGroupedChapters.length} latest novels with chapters`);
+    res.json(orderedGroupedChapters);
   } catch (error) {
     console.error("Error in getLatestChapters:", error);
     res.status(500).json({ message: "Server error", error: String(error) });
