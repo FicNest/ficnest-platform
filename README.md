@@ -1,4 +1,3 @@
-
 # FicNest 📚
 
 **FicNest** is a modern, full-stack web application designed for authors and readers of fan fiction and web novels. It provides a seamless platform for publishing, reading, and interacting with a vibrant community of story lovers.
@@ -127,4 +126,4 @@ This project runs the frontend and backend servers concurrently.
 
 ---
 
-Happy coding! 
+Happy coding!
