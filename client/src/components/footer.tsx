@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Discord link in the middle */}
           <div className="flex items-center justify-center mb-6 md:mb-0 md:mx-8">
             <a 
-              href="https://discord.gg/your-discord-invite" 
+              href="https://discord.gg/ynkKMzWeKm" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center text-primary hover:text-primary-dark transition py-3 px-6 border border-gray-200 rounded-lg hover:bg-gray-50"
