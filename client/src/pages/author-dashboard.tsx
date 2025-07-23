@@ -637,7 +637,14 @@ const NovelCard = ({ novel, onEdit, onAddChapter, initialShowDrafts = false }: {
   initialShowDrafts?: boolean;
 }) => {
   const [showDrafts, setShowDrafts] = useState(initialShowDrafts);
-  
+  // Fetch chapters for this novel
+  const { data: chapters, isLoading: isLoadingChapters } = useQuery<any[]>({
+    queryKey: [`/api/novels/${novel.id}/chapters`],
+    enabled: !!novel.id,
+    staleTime: 1000 * 60 * 5,
+  });
+  // Count only published chapters
+  const publishedChaptersCount = chapters ? chapters.filter((c: any) => c.status === "published").length : 0;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-sm transition">
@@ -665,29 +672,16 @@ const NovelCard = ({ novel, onEdit, onAddChapter, initialShowDrafts = false }: {
                   {novel.title}
                 </Link>
               </h3>
-              <div className="flex flex-wrap gap-2 my-2">
-                {novel.genres?.map((genre: string, index: number) => (
-                  <span key={index} className="bg-gray-100 text-gray-700 text-xs py-1 px-2 rounded-full">
-                    {genre}
-                  </span>
-                ))}
+              {/* Removed genre tags and synopsis/description */}
+              {/* Stats row below title */}
+              <div className="flex flex-wrap gap-6 text-sm text-gray-500 mb-2 mt-2">
+                <div><span className="font-medium">Status:</span> <span className={novel.status === "published" ? "text-green-600" : "text-yellow-600"}>{novel.status.charAt(0).toUpperCase() + novel.status.slice(1)}</span></div>
+                <div><span className="font-medium">Views:</span> {novel.viewCount}</div>
+                <div><span className="font-medium">Chapters:</span> {isLoadingChapters ? "..." : publishedChaptersCount}</div>
+                <div><span className="font-medium">Last Updated:</span> {new Date(novel.updatedAt).toLocaleDateString()}</div>
               </div>
-              <p className="text-sm text-gray-600 line-clamp-2 mb-3">{novel.description}</p>
             </div>
             
-            <div className="text-sm text-gray-500">
-              <div>
-                <span className="font-medium">Status:</span> 
-                <span className={novel.status === "published" ? "text-green-600" : "text-yellow-600"}>
-                  {" "}{novel.status.charAt(0).toUpperCase() + novel.status.slice(1)}
-                </span>
-              </div>
-              <div><span className="font-medium">Views:</span> {novel.viewCount}</div>
-              <div>
-                <span className="font-medium">Last Updated:</span> {" "}
-                {new Date(novel.updatedAt).toLocaleDateString()}
-              </div>
-            </div>
           </div>
           
           <div className="flex flex-wrap items-center gap-3 mt-3">
